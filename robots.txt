@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://paveen202.github.io/BioBot/sitemap.xml
