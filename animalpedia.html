@@ -1,7 +1,11 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f4ec"><title>BioBot — Animalpedia</title><link rel="stylesheet" href="styles.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f4ec">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BioBot"><title>BioBot — Animalpedia</title><link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="site-header"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✳</span><span>biobot</span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="minigames.html">Minigames</a></nav><a class="header-cta" href="minigames.html">Play minigames <span aria-hidden="true">↗</span></a></header>
@@ -13,4 +17,5 @@
 <section class="pedia-list-section"><div class="section-heading"><div><p class="eyebrow">Animalpedia</p><h2>Species entries</h2><p class="section-lede" id="listSummary">Showing 1,000 species from IUCN 2026-1.</p></div><label class="pedia-search"><span aria-hidden="true">⌕</span><input type="search" id="pediaSearch" placeholder="Search common or scientific names"></label></div><div class="pedia-grid" id="pediaGrid"></div><div class="pedia-pagination"><button class="small-game-button" id="previousPage" type="button">← Previous</button><span id="pageSummary" aria-live="polite"></span><button class="small-game-button" id="nextPage" type="button">Next →</button></div></section>
 <p class="pedia-source">Data: <a href="https://www.gbif.org/dataset/19491596-35ae-4a91-9a98-85cf505f1bd3" target="_blank" rel="noreferrer">IUCN Red List of Threatened Species, Version 2026-1, hosted by GBIF</a>. Citation: IUCN (2026), downloaded 28 July 2026, DOI <a href="https://doi.org/10.15468/0qnb58" target="_blank" rel="noreferrer">10.15468/0qnb58</a>. Licensed CC BY 4.0.</p>
 </main><script src="iucn-animals-1000.js"></script><script src="animalpedia.js"></script>
+<script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
 </body></html>
