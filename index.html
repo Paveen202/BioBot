@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f4ec">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BioBot">
   <meta name="description" content="Welcome to BioBot. Explore animal images, Red List stories, and minigames.">
   <title>BioBot — Welcome</title><link rel="stylesheet" href="styles.css">
 </head>
@@ -17,5 +21,6 @@
   <section class="minigames-section"><div class="games-heading"><div><p class="eyebrow">Explore and play</p><h2>Animal minigames</h2><p>Play with species from the 1,000-animal IUCN sample.</p></div></div><div class="game-launch-grid"><a class="game-launch-card" href="minigames.html#memoryPanel"><span>🧠</span><h3>Animal memory</h3><p>Four levels. Match common and scientific names.</p><b>Play memory →</b></a><a class="game-launch-card" href="minigames.html#quizPanel"><span>🐾</span><h3>Animal Q&amp;A</h3><p>12 random questions from the IUCN species list.</p><b>Start a round →</b></a><a class="game-launch-card" href="minigames.html#habitatPanel"><span>🌿</span><h3>Red List match</h3><p>Match animals with their IUCN category.</p><b>Play category match →</b></a></div><a class="button button-primary" href="minigames.html">Open all minigames <span aria-hidden="true">↗</span></a></section>
   <footer class="site-footer"><a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true">✳</span><span>biobot</span></a><p>Explore wildlife. Learn about conservation.</p><p class="footer-small">IUCN Red List species data, Version 2026-1. See the <a href="animalpedia.html">Animalpedia source and citation</a>.</p></footer>
 </main>
+<script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
 </body>
 </html>
