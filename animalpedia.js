@@ -11,7 +11,9 @@ const photoCache = new Map();
 const photoQueue = [];
 let photoWorkerRunning = false;
 function requestAnimalPhoto(record, photoBox, name) {
-  const query = record.scientificName || record.commonName;
+  // IUCN exports often append the taxonomic authority to a binomial. iNaturalist
+  // searches by the genus and species names, so remove the authority suffix.
+  const query = record.scientificName ? record.scientificName.trim().split(/\s+/).slice(0,2).join(' ') : record.commonName;
   if (!query) return;
   const key = normalize(query);
   const cached = photoCache.get(key);
