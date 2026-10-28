@@ -1,5 +1,5 @@
 const BASE = new URL(".", self.location).pathname;
-const CACHE = "biobot-shell-v18";
+const CACHE = "biobot-shell-v19";
 const SHELL = [
   BASE,
   BASE + "index.html",
