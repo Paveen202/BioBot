@@ -1,7 +1,7 @@
 /* Lightweight procedural 3D wildlife arena. Three.js is loaded on demand so
    the battle UI is usable immediately even on a slow connection. */
 (() => {
-  let THREE, renderer, scene, camera, stage, actors = {}, clock = 0, habitat = "forest";
+  let THREE, renderer, scene, camera, stage, actors = {}, clock = 0, habitat = "forest", impacts = [];
   const pending = [];
   const palettes = {
     forest:[0x67904f,0x43805a,0xb1a179], rainforest:[0x23855d,0x40a66d,0xd5a849],
@@ -26,7 +26,7 @@
     pending.splice(0).forEach(update);
   }
   function fit(){if(!renderer||!stage)return;const w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
-  function clearScene(){for(const a of Object.values(actors))if(a.root)scene.remove(a.root);actors={};while(scene.children.length>2)scene.remove(scene.children[2]);}
+  function clearScene(){for(const a of Object.values(actors))if(a.root)scene.remove(a.root);actors={};impacts=[];while(scene.children.length>2)scene.remove(scene.children[2]);}
   function env(key){
     habitat=palettes[key]?key:"forest";const [ground,leaf,rock]=palettes[habitat],groundMat=mat(ground),leafMat=mat(leaf),rockMat=mat(rock);
     const floor=mesh(scene,new THREE.PlaneGeometry(22,13),groundMat,[0,-.05,-3], [1,1,1],[-Math.PI/2,0,0]);floor.receiveShadow=true;
@@ -40,7 +40,7 @@
     if(habitat==="cave"){for(let i=0;i<8;i++)cone(scene,rockMat,[-9+i*2.5,2.5,-5],.65,4.6,[Math.PI,0,0]);}
   }
   function animalModel(animal,side){
-    const root=new THREE.Group();scene.add(root);root.position.set(side==="player"?-3.05:3.05,0,side==="player"?.5:-.35);root.rotation.y=side==="player"?-.12:Math.PI+.12;
+    const root=new THREE.Group();scene.add(root);const homeX=side==="player"?-3.05:3.05,baseRotation=side==="player"?-.12:Math.PI+.12;root.position.set(homeX+(side==="player"?-2.7:2.7),0,side==="player"?.5:-.35);root.rotation.y=baseRotation;
     const name=(animal.name||"").toLowerCase(),className=animal.class||"MAMMALIA";let coat=className==="AVES"?0x738b49:className==="REPTILIA"||className==="AMPHIBIA"?0x64844b:className==="ACTINOPTERYGII"||className==="CHONDRICHTHYES"?0x438da0:className==="INSECTA"?0xc09b42:className==="MALACOSTRACA"?0xa95f46:0x98764e;if(/deer|antelope|gazelle|horse|zebra/.test(name))coat=0xa66c43;if(/rat|mouse|chinchilla|hare|rabbit|squirrel/.test(name))coat=0x88847a;if(/bear|wolf|fox|cat|tiger|lion|leopard/.test(name))coat=0xb27a4a;if(/polar|arctic|snow|ice/.test(name))coat=0xe2e3d9;if(/elephant|rhino|hippo/.test(name))coat=0x77776c;const base=new THREE.Color(coat),fur=mat(base),light=mat(base.clone().offsetHSL(0,.01,.17)),dark=mat(base.clone().offsetHSL(0,-.02,-.2)),black=mat(0x182a27),white=mat(0xfff4d6),limbs=[];
     const body=sphere(root,fur,[0,1.2,0],[1.02,.56,.55]);const head=new THREE.Group();root.add(head);head.position.set(.68,1.68,0);sphere(head,light,[0,0,0],[.42,.4,.39]);sphere(head,black,[.29,.08,.26],[.055,.07,.055]);sphere(head,black,[.29,.08,-.26],[.055,.07,.055]);
     const legMat=dark, addLeg=(x,z)=>{const pivot=new THREE.Group();pivot.position.set(x,.95,z);root.add(pivot);mesh(pivot,new THREE.CylinderGeometry(.105,.13,.67,8),legMat,[0,-.28,0],[1,1,1]);sphere(pivot,dark,[.08,-.59,.02],[.22,.12,.16]);limbs.push(pivot);};
@@ -49,12 +49,19 @@
     else if(["REPTILIA","AMPHIBIA"].includes(className)){body.scale.set(1.18,.36,.62);head.position.set(.92,1.47,0);cone(root,fur,[-1.4,1.12,0],.25,1.2,[0,0,Math.PI/2]);addLeg(.62,.42);addLeg(.62,-.42);addLeg(-.56,.42);addLeg(-.56,-.42);if(className==="AMPHIBIA"){sphere(head,light,[.05,.32,.23],[.16,.19,.15]);sphere(head,light,[.05,.32,-.23],[.16,.19,.15]);}}
     else {addLeg(.58,.35);addLeg(.58,-.35);addLeg(-.58,.35);addLeg(-.58,-.35);cone(root,fur,[-1.12,1.27,0],.18,.85,[0,0,Math.PI/2]);if(/deer|antelope|goat|ibex/.test(animal.name.toLowerCase()))for(const z of [-.22,.22]){mesh(head,new THREE.CylinderGeometry(.035,.1,.48,6),dark,[-.06,.53,z],[1,1,1],[0,0,-.5]);cone(head,white,[-.2,.82,z-.02],.12,.36,[0,0,-.4]);}if(/elephant/.test(animal.name.toLowerCase()))mesh(head,new THREE.CylinderGeometry(.1,.19,.66,8),light,[.32,-.34,0],[1,1,1],[0,0,-.16]);if(/lion|tiger/.test(animal.name.toLowerCase()))sphere(head,dark,[-.08,0,0],[.45,.46,.45]);}
     root.scale.setScalar(1.25);const shadow=mesh(root,new THREE.CircleGeometry(.82,24),mat(0x203426,.98),[0,.045,.02],[1.2,.36,1],[-Math.PI/2,0,0]);shadow.receiveShadow=true;
-    return{root,body,head,limbs,side,phase:Math.random()*6,animal};
+    return{root,body,head,limbs,side,homeX,baseRotation,entryAt:performance.now(),phase:Math.random()*6,animal,className,bodyHeight:body.scale.y};
   }
   function update(state){if(!THREE){pending.push(state);return;}if(!scene)init();if(!scene)return;clearScene();env(state.habitat);actors.player=animalModel(state.player||{name:"Wildlife",class:"MAMMALIA"},"player");actors.rival=animalModel(state.rival||{name:"Wildlife",class:"MAMMALIA"},"rival");}
-  function attack(side,move){const a=actors[side];if(!a)return;const sign=side==="player"?1:-1;a.root.userData.attack={start:performance.now(),sign,move};}
-  function draw(){if(!renderer)return;clock+=.016;for(const a of Object.values(actors)){const t=clock*4+a.phase,hit=a.root.userData.attack,now=performance.now();let dash=0,jump=0;if(hit&&now-hit.start<700){const p=(now-hit.start)/700;dash=Math.sin(p*Math.PI)*.9*hit.sign;jump=Math.sin(p*Math.PI)*.28;}else if(hit)a.root.userData.attack=null;a.root.position.x=(a.side==="player"?-3.05:3.05)+dash;a.root.position.y=Math.max(0,jump)+Math.sin(t)*.035;a.body.rotation.z=Math.sin(t*.5)*.035;a.head.rotation.z=Math.sin(t*.7)*.04;a.limbs.forEach((limb,i)=>{if(limb.isGroup)limb.rotation.z=Math.sin(t+(i%2)*Math.PI)*.48;else limb.rotation.x=Math.sin(t*1.2+i)*.28;});}
-    renderer.render(scene,camera);
+  function attack(side,move){const a=actors[side],target=actors[side==="player"?"rival":"player"];if(!a)return;const sign=side==="player"?1:-1,now=performance.now();a.root.userData.attack={start:now,sign,move,impact:false};if(target)target.root.userData.hit={start:now,sign};}
+  function impactBurst(move){const colors={habitat:0x52d8e4,pollen:0xffd566,river:0x5ebeff,quake:0xd59b59,heal:0x8de49a,camouflage:0xa7df78,guard:0x9be2bd,vine:0x85c96a,adapt:0xffe28a,hit:0xffa15e};const color=colors[move]||colors.hit,g=new THREE.Group();g.position.set(0,1.45,.65);scene.add(g);const core=mesh(g,new THREE.SphereGeometry(.22,12,8),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.95}),[0,0,0],[1,1,1]);const ring=mesh(g,new THREE.TorusGeometry(.34,.045,6,20),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9}),[0,0,.02],[1,1,1]);const sparks=[];for(let i=0;i<8;i++){const angle=i*Math.PI/4,spark=mesh(g,new THREE.SphereGeometry(.07,7,5),new THREE.MeshBasicMaterial({color,transparent:true,opacity:1}),[Math.cos(angle)*.2,Math.sin(angle)*.2,.04],[1,1,1]);sparks.push({mesh:spark,angle});}impacts.push({group:g,core,ring,sparks,start:performance.now()});}
+  function draw(){if(!renderer)return;clock+=.016;const now=performance.now();for(const a of Object.values(actors)){const t=clock*3+a.phase,attack=a.root.userData.attack,hit=a.root.userData.hit;let dash=0,jump=0,stagger=0,brace=0,roll=0;
+      const enter=Math.min(1,Math.max(0,(now-a.entryAt)/850)),enterEase=1-Math.pow(1-enter,3);let x=a.homeX+(a.side==="player"?-2.7:2.7)*(1-enterEase);
+      if(attack){const p=Math.min(1,(now-attack.start)/980),advance=Math.max(0,Math.min(1,(p-.16)/.49)),returning=Math.max(0,Math.min(1,(p-.65)/.35));dash=attack.sign*(2.3*(1-Math.pow(1-advance,3)))*(1-Math.pow(returning,2));const hop=a.className==="AVES"?.7:a.className==="AMPHIBIA"?.62:a.className==="MAMMALIA"?.42:.2;jump=hop*Math.sin(Math.PI*Math.max(0,Math.min(1,(p-.18)/.55)));brace=Math.max(0,1-p*3);if(!attack.impact&&p>.47){attack.impact=true;impactBurst(attack.move||"hit");}if(p>=1)a.root.userData.attack=null;}
+      if(hit){const p=(now-hit.start)/540;if(p<1){const decay=Math.exp(-p*5);stagger=Math.sin(p*28)*.17*decay;roll=Math.sin(p*24)*.12*decay;x+=hit.sign*.42*Math.sin(Math.PI*Math.min(1,p))*Math.exp(-p*2.5);}else a.root.userData.hit=null;}
+      const idleWalk=Math.sin(t)*.035;a.root.position.x=x+dash;a.root.position.y=Math.max(0,jump)+idleWalk;a.root.rotation.y=a.baseRotation+stagger;a.root.rotation.z=roll-brace*.08;a.body.scale.y=a.bodyHeight*(1+.018*Math.sin(t*.65));a.body.rotation.z=Math.sin(t*.5)*.035-brace*.11;a.head.rotation.z=Math.sin(t*.7)*.04+stagger*.45;
+      a.limbs.forEach((limb,i)=>{const stride=Math.sin(t*1.8+(i%2)*Math.PI)*.13,swing=Math.sin(t*2.3+(i%2)*Math.PI)*(.5+(Math.abs(dash)>.1?.65:0));if(limb.isGroup)limb.rotation.z=swing+stride;else limb.rotation.x=Math.sin(t*1.8+i)*.22+(Math.abs(dash)>.1?Math.sin(t*2+i)*.32:0);});
+    }
+    impacts=impacts.filter(effect=>{const p=(now-effect.start)/570;if(p>=1){scene.remove(effect.group);effect.group.traverse(node=>{if(node.geometry)node.geometry.dispose();if(node.material)node.material.dispose();});return false;}const grow=.6+p*1.9;effect.group.scale.setScalar(grow);effect.core.material.opacity=1-p;effect.ring.material.opacity=1-p;effect.sparks.forEach(s=>{s.mesh.position.x=Math.cos(s.angle)*(.2+p*.68);s.mesh.position.y=Math.sin(s.angle)*(.2+p*.68);s.mesh.material.opacity=1-p;});return true;});renderer.render(scene,camera);
   }
   import("https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js").then(module=>{THREE=module;init();}).catch(error=>{console.warn("3D arena could not load:",error);});
   window.addEventListener("biobot:battle3d-update",event=>{window.__bioCity3DState=event.detail;if(window.BioBotBattle3D)window.BioBotBattle3D.update(event.detail);});
