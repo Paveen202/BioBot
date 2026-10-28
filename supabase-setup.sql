@@ -16,3 +16,11 @@ drop policy if exists "Players update own BioBot profile" on public.biobot_profi
 create policy "Players update own BioBot profile" on public.biobot_profiles
   for update to authenticated using (auth.uid() = id) with check (auth.uid() = id);
 grant select, insert, update on public.biobot_profiles to authenticated;
+
+-- Allow the profile screen to receive updates made on another signed-in device.
+do $$ begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime')
+     and not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'biobot_profiles') then
+    alter publication supabase_realtime add table public.biobot_profiles;
+  end if;
+end $$;
