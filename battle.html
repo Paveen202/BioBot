@@ -6,18 +6,22 @@
   <meta name="theme-color" content="#f5f4ec">
   <title>Battle Arena — Bio City</title>
   <style>
-    *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#f5f4ec}main,iframe{width:100%;height:100%;border:0;display:block}iframe{position:fixed;inset:0}
+    *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#f5f4ec}main,iframe{width:100%;height:100%;border:0;display:block}iframe{position:fixed;inset:0}body.is-loading iframe{visibility:hidden}.battle-loading{position:fixed;inset:0;z-index:10;display:grid;place-content:center;justify-items:center;gap:16px;padding:24px;background:radial-gradient(ellipse at 50% 100%,#d8e7c5,#f6f4e9 70%);color:#314c3b;text-align:center;font-family:system-ui,sans-serif}.battle-loading[hidden]{display:none}.loading-mark{width:78px;height:78px;display:grid;place-items:center;border:2px solid #d3dfc9;border-radius:25px;background:#fffefa;font-size:2.5rem;box-shadow:0 12px 30px #29432c1f;animation:loading-bob 1.2s ease-in-out infinite alternate}.battle-loading h1{margin:0;font-size:1.35rem}.battle-loading p{margin:0;color:#66796a}.battle-tip{max-width:440px;margin-top:8px;padding:13px 17px;border:1px solid #e4d39d;border-radius:13px;background:#fff8de;color:#69592f;font-size:.9rem;line-height:1.5}.battle-tip strong{display:block;margin-bottom:4px;color:#506546}@keyframes loading-bob{to{transform:translateY(-7px) rotate(4deg)}}
   </style>
 </head>
-<body>
+<body class="is-loading">
   <main><iframe id="battleView" title="Bio City battle arena" allow="fullscreen"></iframe></main>
+  <section class="battle-loading" id="battleLoading" aria-live="polite"><div class="loading-mark" aria-hidden="true">⚔️</div><h1>Preparing the arena…</h1><p>Getting your animals ready for battle.</p><div class="battle-tip"><strong>Battle tip</strong><span id="loadingTip">Keep an eye on both health bars. A good move at the right time can turn the match around.</span></div></section>
   <script>
     const query = new URLSearchParams(location.search);
     query.set("battle", "1");
     document.getElementById("battleView").src = `bio-city.html?${query.toString()}`;
+    const tips=["Keep an eye on both health bars. A good move at the right time can turn the match around.","Try a defensive move when your animal is low on health.","A stronger attack can deal more damage, but healing may help you last longer.","Your chosen habitat sets the scene for this match.","Watch the battle log to see how armor changes each hit."];
+    let tipIndex=0;const tipTimer=setInterval(()=>{tipIndex=(tipIndex+1)%tips.length;document.getElementById("loadingTip").textContent=tips[tipIndex];},2400);
     window.addEventListener("message", event => {
-      if (event.origin !== location.origin || event.data?.type !== "biocity-exit-battle") return;
-      location.href = "bio-city.html#battleScreen";
+      if (event.origin !== location.origin) return;
+      if (event.data?.type === "biocity-battle-ready") { document.body.classList.remove("is-loading"); document.getElementById("battleLoading").hidden = true; clearInterval(tipTimer); }
+      if (event.data?.type === "biocity-exit-battle") location.href = "bio-city.html#battleScreen";
     });
   </script>
 </body>
