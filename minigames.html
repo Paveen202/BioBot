@@ -11,7 +11,7 @@
   <link rel="canonical" href="https://paveen202.github.io/BioBot/minigames.html">
 </head>
 <body>
-  <header class="site-header"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✳</span><span>biobot</span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="animalpedia.html">Animalpedia</a></nav><a class="header-cta" href="index.html">Back to BioBot <span aria-hidden="true">↗</span></a></header>
+  <header class="site-header"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✳</span><span>biobot</span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="animalpedia.html">Animalpedia</a><a href="bio-city.html">Bio City game</a></nav><a class="header-cta" href="index.html">Back to BioBot <span aria-hidden="true">↗</span></a></header>
   <main class="standalone-main">
     <section class="games-hero"><p class="eyebrow">Three ways to explore wildlife</p><h1>Animal <em>minigames</em></h1><p>Match animal names, test species facts, and identify Red List categories using the 1,000-species IUCN sample.</p><div class="game-score"><span aria-hidden="true">✳</span> <strong id="gameScore">0</strong> points</div></section>
     <div class="game-tabs" role="tablist" aria-label="Choose an animal minigame"><button class="game-tab active" role="tab" id="memoryTab" aria-selected="true" aria-controls="memoryPanel">Animal memory</button><button class="game-tab" role="tab" id="quizTab" aria-selected="false" aria-controls="quizPanel">Animal Q&amp;A</button><button class="game-tab" role="tab" id="habitatTab" aria-selected="false" aria-controls="habitatPanel">Red List match</button></div>
@@ -27,7 +27,7 @@
     </section>
     <p class="games-backlink"><a class="text-link" href="index.html">← Back to BioBot</a><a class="text-link" href="animalpedia.html">Explore Animalpedia →</a></p>
   </main>
-  <script src="iucn-animals-1000.js"></script><script src="minigames.js"></script>
+  <script src="iucn-animals-1000.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="profile.js"></script><script src="minigames.js"></script>
 <script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
 </body>
 </html>
