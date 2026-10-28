@@ -6,15 +6,15 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="BioBot">
-  <title>BioBot — Animal Minigames</title><link rel="stylesheet" href="styles.css">
+  <title>BioBot — Animal Minigames</title><link rel="stylesheet" href="styles.css?v=biocity-battle-5">
   <meta name="description" content="Play wildlife minigames, test animal knowledge, and learn about IUCN Red List categories.">
   <link rel="canonical" href="https://paveen202.github.io/BioBot/minigames.html">
 </head>
 <body>
   <header class="site-header"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✳</span><span>biobot</span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="animalpedia.html">Animalpedia</a><a href="bio-city.html">Bio City game</a></nav><a class="header-cta" href="index.html">Back to BioBot <span aria-hidden="true">↗</span></a></header>
   <main class="standalone-main">
-    <section class="games-hero"><p class="eyebrow">Three ways to explore wildlife</p><h1>Animal <em>minigames</em></h1><p>Match animal names, test species facts, and identify Red List categories using the 1,000-species IUCN sample.</p><div class="game-score"><span aria-hidden="true">✳</span> <strong id="gameScore">0</strong> points</div></section>
-    <div class="game-tabs" role="tablist" aria-label="Choose an animal minigame"><button class="game-tab active" role="tab" id="memoryTab" aria-selected="true" aria-controls="memoryPanel">Animal memory</button><button class="game-tab" role="tab" id="quizTab" aria-selected="false" aria-controls="quizPanel">Animal Q&amp;A</button><button class="game-tab" role="tab" id="habitatTab" aria-selected="false" aria-controls="habitatPanel">Red List match</button></div>
+    <section class="games-hero"><p class="eyebrow">Four ways to explore wildlife</p><h1>Animal <em>minigames</em></h1><p>Match animal names, test species facts, identify Red List categories, or build a wildlife city and battle with animal champions.</p><div class="game-score"><span aria-hidden="true">✳</span> <strong id="gameScore">0</strong> points</div></section>
+    <div class="game-tabs" role="tablist" aria-label="Choose an animal minigame"><button class="game-tab active" role="tab" id="memoryTab" aria-selected="true" aria-controls="memoryPanel">Animal memory</button><button class="game-tab" role="tab" id="quizTab" aria-selected="false" aria-controls="quizPanel">Animal Q&amp;A</button><button class="game-tab" role="tab" id="habitatTab" aria-selected="false" aria-controls="habitatPanel">Red List match</button><a class="game-tab game-tab-link" href="bio-city.html">🏞️ Bio City</a></div>
     <section class="game-panel active" id="memoryPanel" role="tabpanel" aria-labelledby="memoryTab">
       <div class="panel-heading"><div><p class="game-number">MEMORY MATCH</p><h2>Match animal names</h2><p>Pair a common name with its scientific name. Four levels, from 3 pairs to 12 pairs.</p></div><label class="level-picker">Choose a level<select id="memoryLevel"><option value="1">Level 1 · 3 pairs</option><option value="2">Level 2 · 6 pairs</option><option value="3">Level 3 · 8 pairs</option><option value="4">Level 4 · 12 pairs</option></select></label></div>
       <div class="memory-status"><span id="memoryMoves">Moves: 0</span><span id="memoryMatches">Pairs: 0 / 3</span><button class="small-game-button" id="resetMemory" type="button">Restart level</button></div><div class="memory-board" id="memoryBoard" aria-label="Animal and habitat memory cards"></div><p class="game-feedback" id="memoryFeedback" aria-live="polite">Find each animal’s habitat match.</p>
