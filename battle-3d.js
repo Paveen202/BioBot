@@ -1,8 +1,22 @@
-/* Lightweight procedural 3D wildlife arena. Three.js is loaded on demand so
-   the battle UI is usable immediately even on a slow connection. */
+/* Real textured wildlife models in the Bio City battle arena.
+   The GLBs below are CC0 assets; the arena still supplies the physical lunge,
+   recoil, idle motion, habitat scenery and impact effects. */
 (() => {
-  let THREE, renderer, scene, camera, stage, actors = {}, clock = 0, habitat = "forest", impacts = [];
-  const pending = [];
+  let THREE, GLTFLoader, renderer, scene, camera, stage, clock = 0, habitat = "forest", impacts = [], revision = 0;
+  const actors = {}, modelCache = new Map(), pending = [];
+  const ASSET = (id) => `https://cdn.3dassets.dev/assets/${id}/v1/model.glb`;
+  const MODELS = {
+    chinchilla: "https://gobkit.com/freebies/animal008/Chinchilla.glb",
+    rat: ASSET(32795), deer: ASSET(30203), bat: ASSET(20650), gibbon: ASSET(21679),
+    songbird: ASSET(20608), auklet: ASSET(39350), jay: ASSET(20608), woodpecker: ASSET(20643),
+    swift: ASSET(20620), kingfisher: ASSET(28091), monitor: ASSET(28101), snake: ASSET(28100),
+    gecko: ASSET(28165), frog: ASSET(21693), salamander: ASSET(28105),
+    fish: ASSET(5876), reefFish: "https://gobkit.com/freebies/animal008/Parrotfish.glb",
+    flatfish: ASSET(39342), bee: ASSET(20659), dragonfly: ASSET(20657), lobster: ASSET(19590),
+    isopod: ASSET(5893), shark: ASSET(39339), ray: ASSET(39337),
+    mammal: ASSET(30212), bird: ASSET(28091), reptile: ASSET(28101), amphibian: ASSET(28105),
+    crustacean: ASSET(19590), cartilaginousFish: ASSET(39339), insect: ASSET(20657)
+  };
   const palettes = {
     forest:[0x67904f,0x43805a,0xb1a179], rainforest:[0x23855d,0x40a66d,0xd5a849],
     savanna:[0xc5a34b,0x92703a,0xe0c68b], desert:[0xc98948,0xd5a454,0xf0ca83],
@@ -15,54 +29,89 @@
   const sphere=(p,m,pos,scale)=>mesh(p,new THREE.SphereGeometry(1,12,9),m,pos,scale);
   const cone=(p,m,pos,r,h,rot=[0,0,0])=>mesh(p,new THREE.ConeGeometry(r,h,8),m,pos,[1,1,1],rot);
   function init(){
-    stage=document.getElementById("battleStage");if(!stage||!THREE)return;
-    renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:"low-power"});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));renderer.setClearColor(0x000000,0);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;
+    stage=document.getElementById("battleStage");if(!stage||!THREE||!GLTFLoader)return;
+    renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:"low-power"});
+    renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0x000000,0);
+    renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
     renderer.domElement.className="battle-3d-canvas";renderer.domElement.setAttribute("aria-hidden","true");stage.prepend(renderer.domElement);
     scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,6.2,14.5);camera.lookAt(0,1.15,0);
-    scene.add(new THREE.HemisphereLight(0xe5f7ff,0x536446,2.1));const sun=new THREE.DirectionalLight(0xfff0cf,3.2);sun.position.set(-4,9,7);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
+    const hemi=new THREE.HemisphereLight(0xe8f6ff,0x4b493a,1.55);hemi.userData.persistent=true;scene.add(hemi);
+    const sun=new THREE.DirectionalLight(0xfff1d4,2.6);sun.position.set(-4,9,7);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.userData.persistent=true;scene.add(sun);
     fit();new ResizeObserver(fit).observe(stage);renderer.setAnimationLoop(draw);stage.classList.add("has-3d");
     window.BioBotBattle3D={update,attack};
     if(window.__bioCity3DState)update(window.__bioCity3DState);
     pending.splice(0).forEach(update);
   }
   function fit(){if(!renderer||!stage)return;const w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
-  function clearScene(){for(const a of Object.values(actors))if(a.root)scene.remove(a.root);actors={};impacts=[];while(scene.children.length>2)scene.remove(scene.children[2]);}
+  function clearScene(){for(const a of Object.values(actors))if(a.root)scene.remove(a.root);for(const child of [...scene.children])if(!child.userData.persistent)scene.remove(child);for(const key of Object.keys(actors))delete actors[key];impacts=[];}
   function env(key){
     habitat=palettes[key]?key:"forest";const [ground,leaf,rock]=palettes[habitat],groundMat=mat(ground),leafMat=mat(leaf),rockMat=mat(rock);
-    const floor=mesh(scene,new THREE.PlaneGeometry(22,13),groundMat,[0,-.05,-3], [1,1,1],[-Math.PI/2,0,0]);floor.receiveShadow=true;
-    const hillMat=mat(leaf);[-8,-4.5,4.5,8].forEach((x,i)=>sphere(scene,hillMat,[x,.2+(i%2)*.12,-7],[3.1,.82,1.1]));
+    const floor=mesh(scene,new THREE.PlaneGeometry(22,13),groundMat,[0,-.05,-3],[1,1,1],[-Math.PI/2,0,0]);floor.receiveShadow=true;
+    [-8,-4.5,4.5,8].forEach((x,i)=>sphere(scene,mat(leaf),[x,.2+(i%2)*.12,-7],[3.1,.82,1.1]));
     if(["forest","rainforest","savanna","grassland","wetland"].includes(habitat)){
-      for(let i=0;i<12;i++){const x=-9+i*1.65,z=-4-(i%3)*.8,h=1.7+(i%4)*.48;const trunk=mat(0x604832),crown=mat(habitat==="savanna"?0x9a9c43:habitat==="wetland"?0x438a72:leaf);mesh(scene,new THREE.CylinderGeometry(.12,.2,h*.48,7),trunk,[x,h*.24,z],[1,1,1]);if(habitat==="savanna"){sphere(scene,crown,[x,h*.62,z],[.95,.26,.55]);sphere(scene,crown,[x,h*.8,z],[.62,.2,.45]);}else{cone(scene,crown,[x,h*.56,z],.75,h*.9);sphere(scene,crown,[x,h*.8,z],[.5,.52,.5]);}}
+      for(let i=0;i<12;i++){const x=-9+i*1.65,z=-4-(i%3)*.8,h=1.7+(i%4)*.48,trunk=mat(0x604832),crown=mat(habitat==="savanna"?0x9a9c43:habitat==="wetland"?0x438a72:leaf);mesh(scene,new THREE.CylinderGeometry(.12,.2,h*.48,7),trunk,[x,h*.24,z],[1,1,1]);if(habitat==="savanna"){sphere(scene,crown,[x,h*.62,z],[.95,.26,.55]);sphere(scene,crown,[x,h*.8,z],[.62,.2,.45]);}else{cone(scene,crown,[x,h*.56,z],.75,h*.9);sphere(scene,crown,[x,h*.8,z],[.5,.52,.5]);}}
     }
     if(habitat==="desert"){for(let i=0;i<7;i++){const x=-8+i*2.65,z=-3-(i%2);sphere(scene,rockMat,[x,.15,z],[1.4,.4,.75]);if(i%2===0){const cactus=mat(0x4c9456);mesh(scene,new THREE.CylinderGeometry(.16,.2,1.7,7),cactus,[x,.95,z],[1,1,1]);mesh(scene,new THREE.CylinderGeometry(.12,.15,.65,7),cactus,[x+.25,1.2,z],[1,1,1],[0,0,Math.PI/2]);}}}
-    if(habitat==="snow"||habitat==="mountain"){for(let i=0;i<7;i++)cone(scene,mat(habitat==="snow"?0xe5f1ec:0x839d99),[-9+i*3,1.4+(i%3)*.7,-5],1.8,3.4);}
-    if(habitat==="ocean"){for(let i=0;i<15;i++){const x=-9+(i%8)*2.5,z=-5-Math.floor(i/8)*2;const coralMat=mat([0xf18e77,0xe9ba62,0x8e85c2,0x53c3b1][i%4]);for(let b=0;b<3;b++)mesh(scene,new THREE.CylinderGeometry(.08,.14,.45+b*.22,6),coralMat,[x+(b-1)*.22,.25+b*.13,z],[1,1,1],[0,0,(b-1)*.18]);sphere(scene,mat(0xf6e4c1),[x+.45,.4,z],[.5,.18,.32]);}}
-    if(habitat==="cave"){for(let i=0;i<8;i++)cone(scene,rockMat,[-9+i*2.5,2.5,-5],.65,4.6,[Math.PI,0,0]);}
+    if(habitat==="snow"||habitat==="mountain")for(let i=0;i<7;i++)cone(scene,mat(habitat==="snow"?0xe5f1ec:0x839d99),[-9+i*3,1.4+(i%3)*.7,-5],1.8,3.4);
+    if(habitat==="ocean"){for(let i=0;i<15;i++){const x=-9+(i%8)*2.5,z=-5-Math.floor(i/8)*2,coralMat=mat([0xf18e77,0xe9ba62,0x8e85c2,0x53c3b1][i%4]);for(let b=0;b<3;b++)mesh(scene,new THREE.CylinderGeometry(.08,.14,.45+b*.22,6),coralMat,[x+(b-1)*.22,.25+b*.13,z],[1,1,1],[0,0,(b-1)*.18]);sphere(scene,mat(0xf6e4c1),[x+.45,.4,z],[.5,.18,.32]);}}
+    if(habitat==="cave")for(let i=0;i<8;i++)cone(scene,rockMat,[-9+i*2.5,2.5,-5],.65,4.6,[Math.PI,0,0]);
   }
-  function animalModel(animal,side){
-    const root=new THREE.Group();scene.add(root);const homeX=side==="player"?-3.05:3.05,baseRotation=side==="player"?-.12:Math.PI+.12;root.position.set(homeX+(side==="player"?-2.7:2.7),0,side==="player"?.5:-.35);root.rotation.y=baseRotation;
-    const name=(animal.name||"").toLowerCase(),className=animal.class||"MAMMALIA";let coat=className==="AVES"?0x738b49:className==="REPTILIA"||className==="AMPHIBIA"?0x64844b:className==="ACTINOPTERYGII"||className==="CHONDRICHTHYES"?0x438da0:className==="INSECTA"?0xc09b42:className==="MALACOSTRACA"?0xa95f46:0x98764e;if(/deer|antelope|gazelle|horse|zebra/.test(name))coat=0xa66c43;if(/rat|mouse|chinchilla|hare|rabbit|squirrel/.test(name))coat=0x88847a;if(/bear|wolf|fox|cat|tiger|lion|leopard/.test(name))coat=0xb27a4a;if(/polar|arctic|snow|ice/.test(name))coat=0xe2e3d9;if(/elephant|rhino|hippo/.test(name))coat=0x77776c;const base=new THREE.Color(coat),fur=mat(base),light=mat(base.clone().offsetHSL(0,.01,.17)),dark=mat(base.clone().offsetHSL(0,-.02,-.2)),black=mat(0x182a27),white=mat(0xfff4d6),limbs=[];
-    const body=sphere(root,fur,[0,1.2,0],[1.02,.56,.55]);const head=new THREE.Group();root.add(head);head.position.set(.68,1.68,0);sphere(head,light,[0,0,0],[.42,.4,.39]);sphere(head,black,[.29,.08,.26],[.055,.07,.055]);sphere(head,black,[.29,.08,-.26],[.055,.07,.055]);
-    const legMat=dark, addLeg=(x,z)=>{const pivot=new THREE.Group();pivot.position.set(x,.95,z);root.add(pivot);mesh(pivot,new THREE.CylinderGeometry(.105,.13,.67,8),legMat,[0,-.28,0],[1,1,1]);sphere(pivot,dark,[.08,-.59,.02],[.22,.12,.16]);limbs.push(pivot);};
-    if(["AVES"].includes(className)){body.scale.set(.8,.62,.58);head.position.set(.7,1.75,0);cone(head,mat(0xe5a53c),[.42,-.04,0],.13,.5,[0,0,-Math.PI/2]);const wingL=mesh(root,new THREE.SphereGeometry(1,12,8),light,[-.05,1.35,.45],[.62,.16,.36],[0,0,-.18]),wingR=mesh(root,new THREE.SphereGeometry(1,12,8),light,[-.05,1.35,-.45],[.62,.16,.36],[0,0,.18]);limbs.push(wingL,wingR);addLeg(.1,.2);addLeg(.1,-.2);}
-    else if(["ACTINOPTERYGII","CHONDRICHTHYES"].includes(className)){body.scale.set(1.25,.45,.52);head.position.set(.7,1.37,0);const tail=cone(root,light,[-1.28,1.2,0],.5,.85,[0,0,Math.PI/2]);limbs.push(tail);mesh(root,new THREE.ConeGeometry(.28,.65,4),dark,[-.05,1.72,0],[1,1,1]);for(let i=0;i<3;i++)sphere(root,light,[.2-i*.42,1.18,.49],[.27,.1,.12]);}
-    else if(["REPTILIA","AMPHIBIA"].includes(className)){body.scale.set(1.18,.36,.62);head.position.set(.92,1.47,0);cone(root,fur,[-1.4,1.12,0],.25,1.2,[0,0,Math.PI/2]);addLeg(.62,.42);addLeg(.62,-.42);addLeg(-.56,.42);addLeg(-.56,-.42);if(className==="AMPHIBIA"){sphere(head,light,[.05,.32,.23],[.16,.19,.15]);sphere(head,light,[.05,.32,-.23],[.16,.19,.15]);}}
-    else {addLeg(.58,.35);addLeg(.58,-.35);addLeg(-.58,.35);addLeg(-.58,-.35);cone(root,fur,[-1.12,1.27,0],.18,.85,[0,0,Math.PI/2]);if(/deer|antelope|goat|ibex/.test(animal.name.toLowerCase()))for(const z of [-.22,.22]){mesh(head,new THREE.CylinderGeometry(.035,.1,.48,6),dark,[-.06,.53,z],[1,1,1],[0,0,-.5]);cone(head,white,[-.2,.82,z-.02],.12,.36,[0,0,-.4]);}if(/elephant/.test(animal.name.toLowerCase()))mesh(head,new THREE.CylinderGeometry(.1,.19,.66,8),light,[.32,-.34,0],[1,1,1],[0,0,-.16]);if(/lion|tiger/.test(animal.name.toLowerCase()))sphere(head,dark,[-.08,0,0],[.45,.46,.45]);}
-    root.scale.setScalar(1.25);const shadow=mesh(root,new THREE.CircleGeometry(.82,24),mat(0x203426,.98),[0,.045,.02],[1.2,.36,1],[-Math.PI/2,0,0]);shadow.receiveShadow=true;
-    return{root,body,head,limbs,side,homeX,baseRotation,entryAt:performance.now(),phase:Math.random()*6,animal,className,bodyHeight:body.scale.y};
+  function assetFor(animal){
+    const name=(animal?.name||"").toLowerCase(),cls=animal?.class||"MAMMALIA";
+    if(/chinchilla|coccymys/.test(name))return MODELS.chinchilla;
+    if(/rat|mouse|vole/.test(name))return MODELS.rat;
+    if(/deer|antelope|gazelle|elk|moose/.test(name))return MODELS.deer;
+    if(/bat/.test(name))return MODELS.bat;if(/gibbon|monkey|ape/.test(name))return MODELS.gibbon;
+    if(/auklet|penguin/.test(name))return MODELS.auklet;
+    if(/jay/.test(name))return MODELS.jay;if(/woodcreeper|woodpecker/.test(name))return MODELS.woodpecker;
+    if(/pitta|kingfisher/.test(name))return MODELS.kingfisher;if(/warbler|spinetail|swamp/.test(name))return MODELS.songbird;
+    if(/snake/.test(name))return MODELS.snake;if(/gecko/.test(name))return MODELS.gecko;
+    if(/lizard|skink/.test(name))return MODELS.monitor;
+    if(/frog/.test(name))return MODELS.frog;if(/newt|salamander/.test(name))return MODELS.salamander;
+    if(/parrotfish/.test(name))return MODELS.reefFish;if(/sole|flounder/.test(name))return MODELS.flatfish;
+    if(/barbel|loach/.test(name))return MODELS.fish;
+    if(/bee/.test(name))return MODELS.bee;if(/hawker|sprite|clubskimmer|duskdarter|knobtail/.test(name))return MODELS.dragonfly;
+    if(/lobster|crayfish/.test(name))return MODELS.lobster;if(/crab|shrimp/.test(name))return MODELS.isopod;
+    if(/shark|catshark|ghostshark/.test(name))return MODELS.shark;if(/stingaree|guitarfish/.test(name))return MODELS.ray;
+    return ({MAMMALIA:MODELS.mammal,AVES:MODELS.bird,REPTILIA:MODELS.reptile,AMPHIBIA:MODELS.amphibian,ACTINOPTERYGII:MODELS.fish,INSECTA:MODELS.insect,MALACOSTRACA:MODELS.crustacean,CHONDRICHTHYES:MODELS.cartilaginousFish})[cls]||MODELS.mammal;
   }
-  function update(state){if(!THREE){pending.push(state);return;}if(!scene)init();if(!scene)return;clearScene();env(state.habitat);actors.player=animalModel(state.player||{name:"Wildlife",class:"MAMMALIA"},"player");actors.rival=animalModel(state.rival||{name:"Wildlife",class:"MAMMALIA"},"rival");}
-  function attack(side,move){const a=actors[side],target=actors[side==="player"?"rival":"player"];if(!a)return;const sign=side==="player"?1:-1,now=performance.now();a.root.userData.attack={start:now,sign,move,impact:false};if(target)target.root.userData.hit={start:now,sign};}
-  function impactBurst(move){const colors={habitat:0x52d8e4,pollen:0xffd566,river:0x5ebeff,quake:0xd59b59,heal:0x8de49a,camouflage:0xa7df78,guard:0x9be2bd,vine:0x85c96a,adapt:0xffe28a,hit:0xffa15e};const color=colors[move]||colors.hit,g=new THREE.Group();g.position.set(0,1.45,.65);scene.add(g);const core=mesh(g,new THREE.SphereGeometry(.22,12,8),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.95}),[0,0,0],[1,1,1]);const ring=mesh(g,new THREE.TorusGeometry(.34,.045,6,20),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9}),[0,0,.02],[1,1,1]);const sparks=[];for(let i=0;i<8;i++){const angle=i*Math.PI/4,spark=mesh(g,new THREE.SphereGeometry(.07,7,5),new THREE.MeshBasicMaterial({color,transparent:true,opacity:1}),[Math.cos(angle)*.2,Math.sin(angle)*.2,.04],[1,1,1]);sparks.push({mesh:spark,angle});}impacts.push({group:g,core,ring,sparks,start:performance.now()});}
-  function draw(){if(!renderer)return;clock+=.016;const now=performance.now();for(const a of Object.values(actors)){const t=clock*3+a.phase,attack=a.root.userData.attack,hit=a.root.userData.hit;let dash=0,jump=0,stagger=0,brace=0,roll=0;
-      const enter=Math.min(1,Math.max(0,(now-a.entryAt)/850)),enterEase=1-Math.pow(1-enter,3);let x=a.homeX+(a.side==="player"?-2.7:2.7)*(1-enterEase);
-      if(attack){const p=Math.min(1,(now-attack.start)/980),advance=Math.max(0,Math.min(1,(p-.16)/.49)),returning=Math.max(0,Math.min(1,(p-.65)/.35));dash=attack.sign*(2.3*(1-Math.pow(1-advance,3)))*(1-Math.pow(returning,2));const hop=a.className==="AVES"?.7:a.className==="AMPHIBIA"?.62:a.className==="MAMMALIA"?.42:.2;jump=hop*Math.sin(Math.PI*Math.max(0,Math.min(1,(p-.18)/.55)));brace=Math.max(0,1-p*3);if(!attack.impact&&p>.47){attack.impact=true;impactBurst(attack.move||"hit");}if(p>=1)a.root.userData.attack=null;}
-      if(hit){const p=(now-hit.start)/540;if(p<1){const decay=Math.exp(-p*5);stagger=Math.sin(p*28)*.17*decay;roll=Math.sin(p*24)*.12*decay;x+=hit.sign*.42*Math.sin(Math.PI*Math.min(1,p))*Math.exp(-p*2.5);}else a.root.userData.hit=null;}
-      const idleWalk=Math.sin(t)*.035;a.root.position.x=x+dash;a.root.position.y=Math.max(0,jump)+idleWalk;a.root.rotation.y=a.baseRotation+stagger;a.root.rotation.z=roll-brace*.08;a.body.scale.y=a.bodyHeight*(1+.018*Math.sin(t*.65));a.body.rotation.z=Math.sin(t*.5)*.035-brace*.11;a.head.rotation.z=Math.sin(t*.7)*.04+stagger*.45;
-      a.limbs.forEach((limb,i)=>{const stride=Math.sin(t*1.8+(i%2)*Math.PI)*.13,swing=Math.sin(t*2.3+(i%2)*Math.PI)*(.5+(Math.abs(dash)>.1?.65:0));if(limb.isGroup)limb.rotation.z=swing+stride;else limb.rotation.x=Math.sin(t*1.8+i)*.22+(Math.abs(dash)>.1?Math.sin(t*2+i)*.32:0);});
+  function cloneAsset(url){
+    if(!modelCache.has(url))modelCache.set(url,new GLTFLoader().loadAsync(url).then(gltf=>gltf.scene));
+    return modelCache.get(url).then(source=>source.clone(true));
+  }
+  async function addAnimal(animal,side,version){
+    const sideNode=stage.querySelector(`.battle-${side}`),art=document.getElementById(`${side}BattleArt`);sideNode?.classList.remove("has-3d-model");
+    try{
+      const model=await cloneAsset(assetFor(animal));if(version!==revision)return;
+      const bounds=new THREE.Box3().setFromObject(model),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+      if(!Number.isFinite(size.x)||!size.x||!size.y||!size.z)throw new Error("The animal model has no visible geometry.");
+      model.position.set(-center.x,-bounds.min.y,-center.z);
+      model.scale.setScalar(3.15/Math.max(size.x,size.z,size.y*.8));
+      model.traverse(node=>{if(node.isMesh){node.castShadow=true;node.receiveShadow=true;if(node.material){node.material.needsUpdate=true;}}});
+      const root=new THREE.Group();root.add(model);root.position.set(side==="player"?-3.05:3.05,0,side==="player"?.35:-.25);root.rotation.y=side==="player"?Math.PI/2:-Math.PI/2;scene.add(root);
+      actors[side]={root,side,entryAt:performance.now(),phase:Math.random()*6};sideNode?.classList.add("has-3d-model");
+    }catch(error){
+      if(version!==revision)return;sideNode?.classList.remove("has-3d-model");
+      if(art){const image=art.querySelector("img"),fallback=art.querySelector("span");if(image?.src)image.hidden=false;else if(fallback)fallback.style.opacity="1";}
+      console.warn(`3D animal model unavailable for ${animal?.name||"animal"}; showing the species photo instead.`,error);
     }
-    impacts=impacts.filter(effect=>{const p=(now-effect.start)/570;if(p>=1){scene.remove(effect.group);effect.group.traverse(node=>{if(node.geometry)node.geometry.dispose();if(node.material)node.material.dispose();});return false;}const grow=.6+p*1.9;effect.group.scale.setScalar(grow);effect.core.material.opacity=1-p;effect.ring.material.opacity=1-p;effect.sparks.forEach(s=>{s.mesh.position.x=Math.cos(s.angle)*(.2+p*.68);s.mesh.position.y=Math.sin(s.angle)*(.2+p*.68);s.mesh.material.opacity=1-p;});return true;});renderer.render(scene,camera);
   }
-  import("https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js").then(module=>{THREE=module;init();}).catch(error=>{console.warn("3D arena could not load:",error);});
+  function update(state){if(!THREE){pending.push(state);return;}if(!scene)init();if(!scene)return;revision++;clearScene();env(state.habitat);addAnimal(state.player||{name:"Wildlife",class:"MAMMALIA"},"player",revision);addAnimal(state.rival||{name:"Wildlife",class:"MAMMALIA"},"rival",revision);}
+  function attack(side,move){const a=actors[side],target=actors[side==="player"?"rival":"player"];if(!a)return;const sign=side==="player"?1:-1,now=performance.now();a.root.userData.attack={start:now,sign,move,impact:false};if(target)target.root.userData.hit={start:now,sign};}
+  function impactBurst(move){const colors={habitat:0x52d8e4,pollen:0xffd566,river:0x5ebeff,quake:0xd59b59,heal:0x8de49a,camouflage:0xa7df78,guard:0x9be2bd,vine:0x85c96a,adapt:0xffe28a,hit:0xffa15e},color=colors[move]||colors.hit,g=new THREE.Group();g.position.set(0,1.45,.65);scene.add(g);const core=mesh(g,new THREE.SphereGeometry(.22,12,8),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.95}),[0,0,0],[1,1,1]),ring=mesh(g,new THREE.TorusGeometry(.34,.045,6,20),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9}),[0,0,.02],[1,1,1]),sparks=[];for(let i=0;i<8;i++){const angle=i*Math.PI/4,spark=mesh(g,new THREE.SphereGeometry(.07,7,5),new THREE.MeshBasicMaterial({color,transparent:true,opacity:1}),[Math.cos(angle)*.2,Math.sin(angle)*.2,.04],[1,1,1]);sparks.push({mesh:spark,angle});}impacts.push({group:g,core,ring,sparks,start:performance.now()});}
+  function draw(){if(!renderer)return;clock+=.016;const now=performance.now();for(const a of Object.values(actors)){
+      const t=clock*2+a.phase,attack=a.root.userData.attack,hit=a.root.userData.hit,enter=Math.min(1,Math.max(0,(now-a.entryAt)/900)),enterEase=1-Math.pow(1-enter,3),home=a.side==="player"?-3.05:3.05,sign=a.side==="player"?1:-1;
+      let x=home-sign*2.5*(1-enterEase),dash=0,bounce=Math.sin(t)*.035,roll=0;
+      if(attack){const p=Math.min(1,(now-attack.start)/980),advance=Math.max(0,Math.min(1,(p-.12)/.48)),returning=Math.max(0,Math.min(1,(p-.63)/.37));dash=attack.sign*(2.1*(1-Math.pow(1-advance,3)))*(1-Math.pow(returning,2));bounce+=.14*Math.sin(Math.PI*Math.max(0,Math.min(1,(p-.1)/.58)));if(!attack.impact&&p>.46){attack.impact=true;impactBurst(attack.move||"hit");}if(p>=1)a.root.userData.attack=null;}
+      if(hit){const p=(now-hit.start)/550;if(p<1){const decay=Math.exp(-p*4);roll=Math.sin(p*22)*.07*decay;x+=hit.sign*.34*Math.sin(Math.PI*Math.min(1,p))*Math.exp(-p*2.4);}else a.root.userData.hit=null;}
+      a.root.position.x=x+dash;a.root.position.y=Math.max(0,bounce);a.root.rotation.y=(a.side==="player"?Math.PI/2:-Math.PI/2)+Math.sin(t*.48)*.025;a.root.rotation.z=roll+(attack?Math.sin(t*5)*.025:0);
+    }
+    impacts=impacts.filter(effect=>{const p=(now-effect.start)/570;if(p>=1){scene.remove(effect.group);effect.group.traverse(node=>{if(node.geometry)node.geometry.dispose();if(node.material)node.material.dispose();});return false;}effect.group.scale.setScalar(.6+p*1.9);effect.core.material.opacity=1-p;effect.ring.material.opacity=1-p;effect.sparks.forEach(s=>{s.mesh.position.x=Math.cos(s.angle)*(.2+p*.68);s.mesh.position.y=Math.sin(s.angle)*(.2+p*.68);s.mesh.material.opacity=1-p;});return true;});renderer.render(scene,camera);
+  }
+  Promise.all([
+    import("https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"),
+    import("https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js")
+  ]).then(([three,loader])=>{THREE=three;GLTFLoader=loader.GLTFLoader;init();}).catch(error=>console.warn("The 3D wildlife arena could not load:",error));
   window.addEventListener("biobot:battle3d-update",event=>{window.__bioCity3DState=event.detail;if(window.BioBotBattle3D)window.BioBotBattle3D.update(event.detail);});
 })();
