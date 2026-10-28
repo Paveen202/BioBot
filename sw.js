@@ -1,13 +1,18 @@
 const BASE = new URL(".", self.location).pathname;
-const CACHE = "biobot-shell-v1";
+const CACHE = "biobot-shell-v2";
 const SHELL = [
   BASE,
   BASE + "index.html",
   BASE + "animalpedia.html",
   BASE + "minigames.html",
+  BASE + "bio-city.html",
   BASE + "styles.css",
   BASE + "animalpedia.js",
   BASE + "minigames.js",
+  BASE + "bio-city.js",
+  BASE + "profile.js",
+  BASE + "supabase-config.js",
+  BASE + "bio-city-catalog.json",
   BASE + "iucn-animals-1000.js",
   BASE + "manifest.webmanifest",
   BASE + "icon.svg"
