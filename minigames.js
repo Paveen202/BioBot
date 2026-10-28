@@ -2,10 +2,10 @@ const species = window.BIOBOT_IUCN?.species || [];
 const categoryNames = [...new Set(species.map(s => s.category).filter(Boolean))];
 const shuffle = list => list.slice().sort(() => Math.random() - .5);
 const scoreNode = document.getElementById('gameScore');
-let score = 0;
-try { score = Number(localStorage.getItem('biobot-game-score') || 0); } catch {}
+let score = window.BioBotProfile?.get().points || 0;
 scoreNode.textContent = score;
-function award(points){score += points;scoreNode.textContent=score;try{localStorage.setItem('biobot-game-score',String(score));}catch{}}
+function award(points){score = window.BioBotProfile ? window.BioBotProfile.addPoints(points) : score + points;scoreNode.textContent=score;}
+window.addEventListener('biobot:profilechange',()=>{score=window.BioBotProfile?.get().points||score;scoreNode.textContent=score;});
 function emojiFor(record){
   const c=String(record.class||'').toUpperCase();
   if(c.includes('AVES'))return '🐦';if(c.includes('MAMMALIA'))return '🐾';if(c.includes('REPTILIA'))return '🐢';
