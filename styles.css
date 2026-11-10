@@ -188,3 +188,64 @@
   .battle-creature{width:76px;height:90px}
   .battle-center>span{width:26px;height:26px}
 }
+
+
+/* Roomier tablet and compact-device layouts */
+@media(max-width:1100px){
+  .site-header{height:68px;padding:0 22px;gap:16px}
+  .site-header .main-nav{display:flex;flex:1 1 auto;min-width:0;max-width:62vw;margin-left:auto;gap:15px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;white-space:nowrap}
+  .site-header .main-nav::-webkit-scrollbar{display:none}
+  .site-header .main-nav a{flex:0 0 auto;font-size:.75rem}
+  .site-header .header-cta{display:none}
+  .games-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .merch-page-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  main{padding-left:28px;padding-right:28px}
+  .section,.profile-section{padding-top:70px;padding-bottom:70px}
+  .learning-section{padding:62px 30px;margin-left:-28px;margin-right:-28px}
+  .learning-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+}
+@media(max-width:820px){
+  .site-header{padding-left:18px;padding-right:18px}
+  main{padding-left:24px;padding-right:24px}
+  .hero{grid-template-columns:minmax(0,1fr);gap:28px;padding:52px 0 42px}
+  .hero h1{max-width:700px;font-size:clamp(2.8rem,7.2vw,4.1rem)}
+  .hero-feature{height:390px;max-height:none;min-height:320px}
+  .impact-strip{grid-template-columns:minmax(0,1fr);gap:16px;padding:22px 0}
+  .impact-strip article,.impact-strip article:first-child{padding:0;border:0}
+  .species-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .card-photo{height:180px}
+  .profile-layout{grid-template-columns:minmax(0,1fr);gap:26px}
+  .profile-image{height:390px;min-height:320px}
+  .profile-heading{display:flex;align-items:flex-start}
+  .learning-section{padding:56px 26px;margin-left:-24px;margin-right:-24px}
+  .game-panel{padding:22px}
+  .game-card{padding:19px}
+  .chart-panel,.settings-panel{min-width:0}
+}
+@media(max-width:720px){
+  .site-header{height:auto;min-height:58px;flex-wrap:wrap;padding:8px 16px;gap:5px 12px}
+  .site-header .brand{order:1}
+  .site-header .biobot-account-button{order:2;margin-left:auto}
+  .site-header .main-nav{order:3;flex:0 0 100%;width:100%;max-width:100%;margin:0;padding:5px 0 7px;gap:17px}
+  .site-header .main-nav a{font-size:.73rem}
+  .site-header .header-cta{display:none}
+  main{padding-left:18px;padding-right:18px}
+  .hero{padding:38px 0 32px;gap:24px}
+  .hero h1{font-size:clamp(2.45rem,9vw,3.6rem)}
+  .hero-feature{height:340px;min-height:280px}
+  .impact-strip{gap:13px}
+  .section,.profile-section{padding-top:58px;padding-bottom:58px}
+  .learning-section{padding:48px 20px;margin-left:-18px;margin-right:-18px}
+  .games-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:560px){
+  .site-header .main-nav{gap:15px}
+  .site-header .main-nav a{font-size:.68rem}
+  .learning-cards{grid-template-columns:minmax(0,1fr)}
+  .species-grid,.pedia-grid,.game-launch-grid,.biocity-grid,.merch-page-grid{grid-template-columns:minmax(0,1fr)}
+  .card-photo,.pedia-photo{height:190px}
+  .section,.profile-section{padding-top:48px;padding-bottom:48px}
+  .learning-section{padding:42px 16px}
+  .game-tabs{max-width:100%;overflow-x:auto}
+  .game-tab{flex:0 0 auto;white-space:nowrap}
+}
