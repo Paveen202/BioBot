@@ -8,3 +8,6 @@ Bio City works immediately as a guest game and saves the profile on the current 
 4. Publish the changed `supabase-config.js` to GitHub Pages. Do not paste a secret or service-role key into the website.
 
 The browser stores each signed-in player's profile row under their own Auth user ID, protected by row-level security. The profile JSON includes points, level, species, merchandise, and profile style. The battle arena supports NPCs and room-code online player matches after cloud setup; friends sign in on separate devices, one creates a room, and the other joins with its six-character code. This is a lightweight educational game economy; it is not designed to prevent users from editing their own browser data.
+
+
+Background color preferences are included in the synced profile. Sign in to the same BioBot account on each device after configuring the project keys to carry your selected background between devices.
