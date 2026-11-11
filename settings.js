@@ -35,6 +35,24 @@
         :"Saved on this device. Account sync needs to be configured before it can sync across devices.";
   }
 
+
+  const fontInput=document.getElementById("customFontColor");
+  const fontStatus=document.getElementById("fontColorStatus");
+  function currentFontColor(){
+    const saved=background?.getFontColor?.();
+    return background?.valid(saved)?saved:"#1b3025";
+  }
+  function saveFontColor(value){
+    if(!background?.setFontColor?.(value))return;
+    fontInput.value=value;
+    fontStatus.textContent="Font color saved in this browser.";
+  }
+  function resetFontColor(){
+    background?.resetFontColor?.();
+    fontInput.value="#1b3025";
+    fontStatus.textContent="Font color reset to BioBot's default.";
+  }
+
   function readPreferences(){
     try{
       return {...defaultPreferences,...JSON.parse(localStorage.getItem(preferencesKey)||"{}")};
@@ -59,6 +77,9 @@
   input.addEventListener("input",()=>swatches.forEach(button=>button.setAttribute("aria-pressed","false")));
   document.getElementById("saveBackground").addEventListener("click",()=>saveBackground(input.value));
   document.getElementById("resetBackground").addEventListener("click",()=>saveBackground("#f5f4ec"));
+  document.getElementById("saveFontColor").addEventListener("click",()=>saveFontColor(fontInput.value));
+  document.getElementById("resetFontColor").addEventListener("click",resetFontColor);
+  fontInput.value=currentFontColor();
   sizeInput.addEventListener("change",savePreferences);
   motionInput.addEventListener("change",savePreferences);
   document.getElementById("resetDisplayPreferences").addEventListener("click",()=>{
