@@ -13,11 +13,23 @@ function emojiFor(record){
   if(c.includes('INSECTA'))return '🦋';if(c.includes('ARACHNIDA'))return '🕷️';if(c.includes('MALACOSTRACA'))return '🦀';if(c.includes('GASTROPODA'))return '🐌';return '🐾';
 }
 function displayName(record){return record.commonName && record.commonName!==record.scientificName ? record.commonName : record.scientificName;}
-const tabs=[...document.querySelectorAll('.game-tab')];
-tabs.forEach(tab=>tab.addEventListener('click',()=>{
-  tabs.forEach(t=>{const on=t===tab;t.classList.toggle('active',on);t.setAttribute('aria-selected',String(on));});
-  document.querySelectorAll('.game-panel').forEach(panel=>{const on=panel.id===tab.getAttribute('aria-controls');panel.hidden=!on;panel.classList.toggle('active',on);});
-}));
+const tabs=[...document.querySelectorAll('.game-tab[aria-controls]')];
+const panels=[...document.querySelectorAll('.game-panel')];
+function activatePanel(id,updateHash=false){
+  const tab=tabs.find(item=>item.getAttribute('aria-controls')===id);
+  if(!tab)return false;
+  tabs.forEach(item=>{const active=item===tab;item.classList.toggle('active',active);item.setAttribute('aria-selected',String(active));});
+  panels.forEach(panel=>{const active=panel.id===id;panel.hidden=!active;panel.classList.toggle('active',active);});
+  if(updateHash)history.replaceState(null,"",`#${id}`);
+  return true;
+}
+tabs.forEach(tab=>tab.addEventListener('click',()=>activatePanel(tab.getAttribute('aria-controls'),true)));
+function syncPanelFromHash(){
+  const id=decodeURIComponent(location.hash.slice(1));
+  if(activatePanel(id))requestAnimationFrame(()=>document.getElementById(id)?.scrollIntoView({block:"start"}));
+}
+syncPanelFromHash();
+window.addEventListener('hashchange',syncPanelFromHash);
 
 // Four difficulty levels: match each animal's common name to its scientific name.
 let openCards=[],matchedPairs=0,moves=0,busy=false;
