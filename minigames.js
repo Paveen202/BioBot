@@ -112,7 +112,7 @@ function extraTodayKey(){
   return [now.getFullYear(),String(now.getMonth()+1).padStart(2,"0"),String(now.getDate()).padStart(2,"0")].join("-");
 }
 function freshExtraState(){
-  return {day:extraTodayKey(),daily:{memoryPairs:0,quizCorrect:0,statusCorrect:0,claimed:{},challengeDone:false},stats:{memoryPairs:0,quizCorrect:0,statusCorrect:0,rescueStories:0,mysteriesSolved:0,dailyClaims:0,habitatBuilds:0},unlockedBadges:[],builder:{biome:"woodland",itemsByBiome:{woodland:[],wetland:[],grassland:[],ocean:[]}}};
+  return {day:extraTodayKey(),daily:{memoryPairs:0,quizCorrect:0,statusCorrect:0,claimed:{},challengeDone:false},stats:{memoryPairs:0,quizCorrect:0,statusCorrect:0,rescueStories:0,mysteriesSolved:0,dailyClaims:0,habitatBuilds:0,foodWebChains:0,adaptationCorrect:0,speciesSortCorrect:0},unlockedBadges:[],builder:{biome:"woodland",itemsByBiome:{woodland:[],wetland:[],grassland:[],ocean:[]}}};
 }
 function loadExtraState(){
   const fresh=freshExtraState();
@@ -455,7 +455,10 @@ const extraBadges=[
   {id:"wildlife-ally",title:"Wildlife Ally",icon:"🪽",description:"Complete a wildlife rescue story.",ready:()=>extraState.stats.rescueStories>=1},
   {id:"mystery-solver",title:"Mystery Solver",icon:"🐾",description:"Solve 3 mystery animals.",ready:()=>extraState.stats.mysteriesSolved>=3},
   {id:"challenge-champion",title:"Challenge Champion",icon:"🌎",description:"Claim 3 daily game missions.",ready:()=>extraState.stats.dailyClaims>=3},
-  {id:"habitat-designer",title:"Habitat Designer",icon:"🌱",description:"Add a feature to your first habitat.",ready:()=>extraState.stats.habitatBuilds>=1}
+  {id:"habitat-designer",title:"Habitat Designer",icon:"🌱",description:"Add a feature to your first habitat.",ready:()=>extraState.stats.habitatBuilds>=1},
+  {id:"food-web-builder",title:"Food Web Builder",icon:"🌿",description:"Complete 3 food chains.",ready:()=>extraState.stats.foodWebChains>=3},
+  {id:"adaptation-ace",title:"Adaptation Ace",icon:"🧩",description:"Match 8 animal adaptations correctly.",ready:()=>extraState.stats.adaptationCorrect>=8},
+  {id:"species-sorter",title:"Species Sorter",icon:"📚",description:"Sort 8 species into the right class.",ready:()=>extraState.stats.speciesSortCorrect>=8}
 ];
 function checkExtraBadges(){
   const newlyEarned=[];
@@ -486,6 +489,213 @@ function renderBadges(){
   const total=extraBadges.length;
   document.getElementById("badgeSummary").textContent=extraState.unlockedBadges.length+" of "+total+" badges earned";
 }
+
+const foodWebChains=[
+  {habitat:"Grassland",steps:[{role:"Plant",name:"Grass"},{role:"Plant-eater",name:"Zebra"},{role:"Predator",name:"Lion"}]},
+  {habitat:"Woodland",steps:[{role:"Plant",name:"Oak leaves"},{role:"Plant-eater",name:"Caterpillar"},{role:"Predator",name:"Robin"}]},
+  {habitat:"Ocean",steps:[{role:"Plant",name:"Kelp"},{role:"Plant-eater",name:"Sea urchin"},{role:"Predator",name:"Sea otter"}]},
+  {habitat:"River",steps:[{role:"Plant",name:"Algae"},{role:"Plant-eater",name:"Mayfly nymph"},{role:"Predator",name:"Trout"}]}
+];
+const foodWebRoleNames=["Plant","Plant-eater","Predator"];
+let foodWebRound=[],foodWebChainIndex=0,foodWebStep=0,foodWebAnswers=[],foodWebScore=0,foodWebStarted=false;
+function renderFoodWebChain(){
+  const root=document.getElementById("foodWebChain");
+  root.replaceChildren();
+  foodWebRoleNames.forEach((role,index)=>{
+    const slot=extraNode("div","foodweb-slot"+(foodWebAnswers[index]?" filled":""));
+    slot.append(extraNode("span","foodweb-role",role));
+    slot.append(extraNode("strong","foodweb-organism",foodWebAnswers[index]||"Waiting"));
+    root.append(slot);
+    if(index<foodWebRoleNames.length-1)root.append(extraNode("span","foodweb-arrow","→"));
+  });
+}
+function finishFoodWebRound(){
+  document.getElementById("foodWebProgress").textContent="Round complete · "+foodWebScore+" / 9 correct";
+  document.getElementById("foodWebPrompt").textContent="You built three different food chains. Start another shuffled round whenever you like.";
+  document.getElementById("foodWebOptions").replaceChildren();
+  document.getElementById("foodWebFeedback").textContent="Nice work connecting plants, plant-eaters, and predators.";
+  document.getElementById("foodWebFeedback").classList.add("success");
+  document.getElementById("foodWebChain").replaceChildren();
+  document.getElementById("nextFoodWeb").hidden=true;
+  const start=document.getElementById("startFoodWeb");
+  start.hidden=false;
+  start.textContent="Play another round ↻";
+}
+function showFoodWebStep(){
+  const chain=foodWebRound[foodWebChainIndex];
+  document.getElementById("foodWebProgress").textContent="Chain "+(foodWebChainIndex+1)+" of "+foodWebRound.length+" · "+foodWebScore+" / 9 correct";
+  document.getElementById("foodWebPrompt").textContent="Choose the "+chain.steps[foodWebStep].role.toLowerCase()+" for the "+chain.habitat+" food chain.";
+  document.getElementById("foodWebFeedback").textContent="";
+  document.getElementById("foodWebFeedback").classList.remove("success");
+  document.getElementById("nextFoodWeb").hidden=true;
+  renderFoodWebChain();
+  const target=chain.steps[foodWebStep];
+  const options=[...new Set(foodWebChains.map(item=>item.steps[foodWebStep].name))];
+  const root=document.getElementById("foodWebOptions");
+  root.replaceChildren();
+  shuffle(options).forEach(choice=>{
+    const button=extraNode("button","qa-choice",choice);
+    button.type="button";
+    button.addEventListener("click",()=>{
+      if(choice!==target.name){
+        button.disabled=true;
+        document.getElementById("foodWebFeedback").textContent="Not quite. Think about what belongs in the "+target.role.toLowerCase()+" spot, then try another card.";
+        return;
+      }
+      root.querySelectorAll("button").forEach(item=>item.disabled=true);
+      button.classList.add("is-correct");
+      foodWebAnswers[foodWebStep]=choice;
+      foodWebScore++;
+      award(5);
+      foodWebStep++;
+      renderFoodWebChain();
+      if(foodWebStep>=3){
+        trackExtraActivity("foodWebChains");
+        award(5);
+        document.getElementById("foodWebProgress").textContent="Chain "+(foodWebChainIndex+1)+" of "+foodWebRound.length+" complete · "+foodWebScore+" / 9 correct";
+        document.getElementById("foodWebPrompt").textContent="You completed the "+chain.habitat+" chain!";
+        const feedback=document.getElementById("foodWebFeedback");
+        feedback.textContent="Chain complete! +5 Bio points.";
+        feedback.classList.add("success");
+        const next=document.getElementById("nextFoodWeb");
+        next.textContent=foodWebChainIndex===foodWebRound.length-1?"Finish round":"Next chain →";
+        next.hidden=false;
+      }else{
+        const feedback=document.getElementById("foodWebFeedback");
+        feedback.textContent="Correct! +5 Bio points. Add the next part of the chain.";
+        feedback.classList.add("success");
+        showFoodWebStep();
+        feedback.textContent="Correct! +5 Bio points. Add the next part of the chain.";
+        feedback.classList.add("success");
+      }
+    });
+    root.append(button);
+  });
+}
+function startFoodWebRound(){
+  foodWebRound=shuffle(foodWebChains).slice(0,3);
+  foodWebChainIndex=0;
+  foodWebStep=0;
+  foodWebAnswers=[];
+  foodWebScore=0;
+  foodWebStarted=true;
+  document.getElementById("startFoodWeb").hidden=true;
+  showFoodWebStep();
+}
+document.getElementById("startFoodWeb").addEventListener("click",startFoodWebRound);
+document.getElementById("nextFoodWeb").addEventListener("click",()=>{
+  if(!foodWebStarted)return;
+  if(foodWebChainIndex===foodWebRound.length-1){foodWebChainIndex=foodWebRound.length;finishFoodWebRound();return;}
+  foodWebChainIndex++;
+  foodWebStep=0;
+  foodWebAnswers=[];
+  showFoodWebStep();
+});
+
+const adaptationCards=[
+  {trait:"Camouflage coloring",help:"Blend into nearby surroundings."},
+  {trait:"Webbed feet",help:"Push against water to help with swimming."},
+  {trait:"Thick fur",help:"Hold in body heat in cold conditions."},
+  {trait:"Blubber",help:"Insulate the body in cold water."},
+  {trait:"Echolocation",help:"Use returning sound echoes to locate nearby things."},
+  {trait:"Sticky toe pads",help:"Grip surfaces while climbing."},
+  {trait:"A hard shell",help:"Protect a soft body."},
+  {trait:"A long tongue",help:"Reach nectar deep inside some flowers."}
+];
+let adaptationRound=[],adaptationIndex=0,adaptationScore=0;
+function startAdaptationRound(){
+  adaptationRound=shuffle(adaptationCards);
+  adaptationIndex=0;
+  adaptationScore=0;
+  document.getElementById("startAdaptation").hidden=true;
+  showAdaptationQuestion();
+}
+function showAdaptationQuestion(){
+  const feedback=document.getElementById("adaptationFeedback");
+  const options=document.getElementById("adaptationOptions");
+  options.replaceChildren();
+  feedback.textContent="";
+  feedback.classList.remove("success");
+  document.getElementById("nextAdaptation").hidden=true;
+  if(adaptationIndex>=adaptationRound.length){
+    document.getElementById("adaptationProgress").textContent="Round complete · "+adaptationScore+" / "+adaptationRound.length+" correct";
+    document.getElementById("adaptationTitle").textContent="Great field work!";
+    document.getElementById("adaptationPrompt").textContent="Play another round to review the animal adaptations.";
+    document.getElementById("startAdaptation").hidden=false;
+    document.getElementById("startAdaptation").textContent="Play another round ↻";
+    return;
+  }
+  const item=adaptationRound[adaptationIndex];
+  document.getElementById("adaptationProgress").textContent="Question "+(adaptationIndex+1)+" of "+adaptationRound.length+" · Score "+adaptationScore;
+  document.getElementById("adaptationTitle").textContent=item.trait;
+  document.getElementById("adaptationPrompt").textContent="What can this feature help an animal do?";
+  const choices=shuffle([item.help,...shuffle(adaptationCards.filter(other=>other!==item).map(other=>other.help)).slice(0,3)]);
+  choices.forEach(choice=>{
+    const button=extraNode("button","qa-choice",choice);
+    button.type="button";
+    button.addEventListener("click",()=>{
+      const correct=choice===item.help;
+      options.querySelectorAll("button").forEach(candidate=>{candidate.disabled=true;if(candidate.textContent===item.help)candidate.classList.add("is-correct");});
+      if(correct){adaptationScore++;award(8);trackExtraActivity("adaptationCorrect");}
+      feedback.textContent=correct?"That's right! "+item.trait+" can help "+item.help.toLowerCase()+" +8 Bio points.":"The match is: "+item.help;
+      feedback.classList.toggle("success",correct);
+      document.getElementById("nextAdaptation").textContent=adaptationIndex===adaptationRound.length-1?"See results":"Next feature →";
+      document.getElementById("nextAdaptation").hidden=false;
+    });
+    options.append(button);
+  });
+}
+document.getElementById("startAdaptation").addEventListener("click",startAdaptationRound);
+document.getElementById("nextAdaptation").addEventListener("click",()=>{adaptationIndex++;showAdaptationQuestion();});
+
+const speciesClassNames=[...new Set(species.map(record=>readableTaxon(record.class)).filter(name=>name!=="Not Listed"))];
+let speciesSortRound=[],speciesSortIndex=0,speciesSortScore=0;
+function startSpeciesSortRound(){
+  speciesSortRound=shuffle(species).slice(0,10);
+  speciesSortIndex=0;
+  speciesSortScore=0;
+  document.getElementById("startSpeciesSort").hidden=true;
+  showSpeciesSortQuestion();
+}
+function showSpeciesSortQuestion(){
+  const feedback=document.getElementById("speciesSortFeedback");
+  const options=document.getElementById("speciesSortOptions");
+  options.replaceChildren();
+  feedback.textContent="";
+  feedback.classList.remove("success");
+  document.getElementById("nextSpeciesSort").hidden=true;
+  if(speciesSortIndex>=speciesSortRound.length){
+    document.getElementById("speciesSortProgress").textContent="Round complete · "+speciesSortScore+" / "+speciesSortRound.length+" correct";
+    document.getElementById("speciesSortTitle").textContent="Sorter score: "+speciesSortScore+" / "+speciesSortRound.length;
+    document.getElementById("speciesSortPrompt").textContent="Play again for ten new species records.";
+    document.getElementById("startSpeciesSort").hidden=false;
+    document.getElementById("startSpeciesSort").textContent="Play another round ↻";
+    return;
+  }
+  const record=speciesSortRound[speciesSortIndex];
+  const answer=readableTaxon(record.class);
+  document.getElementById("speciesSortProgress").textContent="Species "+(speciesSortIndex+1)+" of "+speciesSortRound.length+" · Score "+speciesSortScore;
+  document.getElementById("speciesSortTitle").textContent=emojiFor(record)+" "+displayName(record);
+  document.getElementById("speciesSortPrompt").textContent="Which scientific class is this species listed under?";
+  const choices=shuffle([answer,...shuffle(speciesClassNames.filter(name=>name!==answer)).slice(0,3)]);
+  choices.forEach(choice=>{
+    const button=extraNode("button","qa-choice",choice);
+    button.type="button";
+    button.addEventListener("click",()=>{
+      const correct=choice===answer;
+      options.querySelectorAll("button").forEach(candidate=>{candidate.disabled=true;if(candidate.textContent===answer)candidate.classList.add("is-correct");});
+      if(correct){speciesSortScore++;award(7);trackExtraActivity("speciesSortCorrect");}
+      feedback.textContent=correct?"Correct group! +7 Bio points.":"This species is listed under "+answer+".";
+      feedback.classList.toggle("success",correct);
+      document.getElementById("nextSpeciesSort").textContent=speciesSortIndex===speciesSortRound.length-1?"See results":"Next species →";
+      document.getElementById("nextSpeciesSort").hidden=false;
+    });
+    options.append(button);
+  });
+}
+document.getElementById("startSpeciesSort").addEventListener("click",startSpeciesSortRound);
+document.getElementById("nextSpeciesSort").addEventListener("click",()=>{speciesSortIndex++;showSpeciesSortQuestion();});
+
 function initExtraGames(){
   renderDailyMissions();
   renderRescueStory();

@@ -452,3 +452,25 @@ html[data-reduce-motion="true"] *,html[data-reduce-motion="true"] *::before,html
 .top-rewards .device-save-note{margin:3px 0 0;font-size:.66rem}
 .mission-card .mission-action{width:100%;min-height:42px;text-align:center}
 @media(max-width:620px){.top-rewards{padding:14px}.top-rewards-heading{align-items:flex-start;flex-direction:column;gap:8px}.top-rewards .badge-card{flex-basis:122px;min-height:126px}}
+
+/* New Bio City wardrobe filters */
+.merch-filters{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 20px}
+.merch-filter{min-height:42px;padding:9px 14px;border:1px solid #d6e0d3;border-radius:24px;background:#fffefa;color:#65746a;font-size:.75rem;font-weight:800;cursor:pointer}
+.merch-filter:hover,.merch-filter.active{border-color:var(--green);background:#e8f0e2;color:var(--green-dark)}
+.merch-category{display:inline-block;align-self:flex-start;margin:14px 0 -12px;padding:5px 8px;border-radius:15px;background:#edf2e9;color:#627363;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.merch-page-card h2{margin-top:18px}
+.biocity-wardrobe-note{margin:16px 0 0;color:#728076;font-size:.76rem}
+.biocity-wardrobe-note a{color:var(--green);font-weight:800;text-decoration:none}
+.foodweb-game,.adaptation-card{margin-top:21px;padding:clamp(17px,3vw,25px);border:1px solid var(--line);border-radius:15px;background:#f7f8f1}
+.foodweb-progress,.adaptation-progress{margin:0 0 10px;color:var(--green);font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.foodweb-chain{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr);align-items:center;gap:8px;margin:18px 0}
+.foodweb-slot{min-width:0;min-height:95px;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:13px;border:1px dashed #c6d5c2;border-radius:13px;background:#fffefa;text-align:center}
+.foodweb-slot.filled{border-style:solid;background:#eaf2e6}
+.foodweb-role{color:#748176;font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.foodweb-organism{overflow-wrap:anywhere;color:var(--green-dark);font:700 .92rem var(--display)}
+.foodweb-arrow{color:#81947e;text-align:center;font-size:1.15rem;font-weight:800}
+.foodweb-prompt{margin:15px 0 0;color:var(--ink);font-weight:700}
+.adaptation-card h3{margin:4px 0;font:700 1.25rem var(--display)}
+.adaptation-card>p:not(.adaptation-progress){margin:7px 0;color:var(--muted);font-size:.82rem}
+@media(max-width:620px){.foodweb-chain{gap:4px;grid-template-columns:minmax(0,1fr) 17px minmax(0,1fr) 17px minmax(0,1fr)}.foodweb-slot{min-height:82px;padding:8px 4px}.foodweb-organism{font-size:.75rem}.foodweb-role{font-size:.54rem}}
+@media(max-width:400px){.foodweb-chain{grid-template-columns:minmax(0,1fr);gap:5px}.foodweb-arrow{transform:rotate(90deg);font-size:1rem}.foodweb-slot{min-height:66px}}
