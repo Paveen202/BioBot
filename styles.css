@@ -438,3 +438,17 @@ html[data-reduce-motion="true"] *,html[data-reduce-motion="true"] *::before,html
 @media(max-width:800px){.mission-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.badge-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rescue-choices{grid-template-columns:1fr}}
 @media(max-width:620px){.feature-two-col{grid-template-columns:minmax(0,1fr)}.mission-grid{grid-template-columns:minmax(0,1fr)}.challenge-card{grid-template-columns:minmax(0,1fr)}.challenge-card .feature-kicker,.challenge-card h3,.challenge-card p,.challenge-card .button{grid-column:1;grid-row:auto}.challenge-card .button{width:100%}.builder-controls{align-items:stretch;flex-direction:column}.builder-controls select{width:100%;min-width:0}.habitat-palette{grid-template-columns:repeat(2,minmax(0,1fr))}.habitat-tile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.badge-grid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:360px){.habitat-palette,.habitat-tile-grid{grid-template-columns:minmax(0,1fr)}.spotlight-fact{align-items:flex-start;flex-direction:column;gap:2px}.spotlight-fact strong{text-align:left}}
+
+/* Keep rewards visible above the games and let mission cards launch their games */
+.top-rewards{margin:18px 0 16px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
+.top-rewards-heading{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.top-rewards-heading h2{margin:2px 0 0;font:700 1.1rem var(--display);letter-spacing:-.035em}
+.top-rewards-heading #badgeSummary{margin:0;padding:8px 11px;border-radius:20px;background:#e8f0e2;color:var(--green-dark);font-size:.72rem;font-weight:800;white-space:nowrap}
+.top-rewards .badge-grid{display:flex;gap:9px;max-width:100%;overflow-x:auto;padding:12px 2px 7px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain}
+.top-rewards .badge-card{flex:0 0 132px;min-height:132px;display:flex;flex-direction:column;gap:7px;padding:11px;background:#fafaf6}
+.top-rewards .badge-card h3{font-size:.78rem}
+.top-rewards .badge-card p{font-size:.62rem}
+.top-rewards .badge-icon{width:34px;height:34px;flex-basis:34px;font-size:1.05rem}
+.top-rewards .device-save-note{margin:3px 0 0;font-size:.66rem}
+.mission-card .mission-action{width:100%;min-height:42px;text-align:center}
+@media(max-width:620px){.top-rewards{padding:14px}.top-rewards-heading{align-items:flex-start;flex-direction:column;gap:8px}.top-rewards .badge-card{flex-basis:122px;min-height:126px}}
