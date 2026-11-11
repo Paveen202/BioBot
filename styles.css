@@ -371,3 +371,70 @@ html[data-reduce-motion="true"] *,html[data-reduce-motion="true"] *::before,html
 .pollution-sources a{color:var(--green-dark);font-size:.8rem;font-weight:700}
 @media(max-width:900px){.pollution-grid,.other-threats-grid,.pollution-sources ul{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.pollution-hero{padding:34px 0 25px}.pollution-card{padding:18px}.pollution-actions{padding:20px}}
+
+/* Minigames conservation activities */
+.standalone-main .game-tabs{max-width:100%;overflow-x:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain}
+.standalone-main .game-tab{flex:0 0 auto;white-space:nowrap}
+.feature-two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:22px}
+.feature-card,.mission-card,.rescue-card,.challenge-card{min-width:0;padding:20px;border:1px solid var(--line);border-radius:15px;background:#fffefa}
+.mission-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0 16px}
+.mission-card{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:16px}
+.mission-card-top{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mission-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#e8f0e2;color:var(--green);font-size:1.15rem}
+.mission-progress-label,.feature-kicker{color:var(--green);font-size:.63rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.mission-card h3,.challenge-card h3,.rescue-card h3,.feature-card h3{margin:3px 0;font:700 1.02rem var(--display);letter-spacing:-.025em}
+.mission-card p,.challenge-card p,.rescue-card>p,.feature-card>p:not(.feature-kicker){margin:0;color:var(--muted);font-size:.77rem;line-height:1.65}
+.mission-progress-track{width:100%;height:7px;overflow:hidden;border-radius:8px;background:#edf0e9;margin:auto 0 4px}
+.mission-progress-fill{display:block;height:100%;border-radius:8px;background:#7ca36d;transition:width .2s}
+.mission-card .small-game-button{min-height:40px}
+.small-game-button:disabled,.button:disabled{opacity:.62;cursor:default}
+.challenge-card{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;background:#edf3e9}
+.challenge-card .feature-kicker{grid-column:1/-1;margin:0}
+.challenge-card h3,.challenge-card p{grid-column:1}
+.challenge-card .button{grid-column:2;grid-row:2/4;min-height:44px}
+.rescue-card{margin-top:21px;padding:clamp(18px,3vw,28px);background:#f7f8f1}
+.rescue-progress{margin-bottom:8px;color:var(--green);font-size:.68rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase}
+.rescue-card h3{font-size:1.25rem}
+.rescue-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px}
+.rescue-choices .qa-choice{height:100%;min-height:84px}
+.rescue-card #nextRescue,.mystery-card #nextMystery{margin-top:8px;min-height:42px}
+.mystery-clues{display:grid;gap:9px;margin:16px 0 4px;padding-left:21px;color:#5c6b60;font-size:.8rem}
+.mystery-options{margin-top:15px}
+.spotlight-card{background:#f5f7ef}
+.spotlight-animal{display:flex;align-items:center;gap:13px;margin:12px 0 16px;color:var(--green-dark);font:700 1.2rem var(--display)}
+.spotlight-emoji{width:54px;height:54px;display:grid;place-items:center;border-radius:16px;background:#e3eddc;font-size:1.8rem}
+.spotlight-fact{display:flex;justify-content:space-between;gap:10px;margin:0;padding:9px 0;border-bottom:1px solid #e6eade;color:var(--muted);font-size:.74rem}
+.spotlight-fact strong{text-align:right;color:var(--ink)}
+.spotlight-source{display:inline-block;margin-top:15px;color:var(--green);font-size:.76rem}
+.builder-controls{display:flex;align-items:end;justify-content:space-between;gap:15px;margin:22px 0}
+.builder-controls label{display:grid;gap:6px;color:#65746a;font-size:.7rem;font-weight:700}
+.builder-controls select{min-width:210px;padding:10px 12px;border:1px solid #d8e1d5;border-radius:9px;background:#fffefa;color:var(--ink);font:600 .78rem var(--sans)}
+#builderSaveStatus{margin:0;color:#748177;font-size:.72rem}
+.builder-subheading{margin:20px 0 10px;font:700 1rem var(--display)}
+.habitat-palette{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.habitat-choice{min-height:48px;padding:10px;border:1px solid #d8e1d5;border-radius:10px;background:#fffefa;color:#536459;font-size:.76rem;font-weight:700;cursor:pointer}
+.habitat-choice:hover,.habitat-choice.selected{border-color:#83a078;background:#eaf1e5;color:var(--green-dark)}
+.habitat-plot{min-height:190px;margin-top:18px;padding:18px;border:1px solid #d7e1d3;border-radius:16px;background:linear-gradient(140deg,#e4f0dd,#f4f1df)}
+.habitat-plot[data-biome="wetland"]{background:linear-gradient(140deg,#dceee8,#edf2df)}
+.habitat-plot[data-biome="grassland"]{background:linear-gradient(140deg,#edf1d5,#f7eed7)}
+.habitat-plot[data-biome="ocean"]{background:linear-gradient(140deg,#d7ecec,#e4f1e5)}
+.habitat-plot-heading{margin:0 0 12px;color:var(--green-dark);font:700 1rem var(--display)}
+.habitat-tile-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.habitat-piece{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:6px;padding:10px;border:1px solid #dce4d7;border-radius:11px;background:#ffffffc9;color:var(--green-dark)}
+.habitat-piece>span{font-size:1.45rem}
+.habitat-piece strong{font-size:.72rem}
+.habitat-remove{grid-column:1/-1;justify-self:start;padding:5px 8px;border:0;border-radius:7px;background:#edf1e9;color:#65746a;font-size:.66rem;font-weight:700;cursor:pointer}
+.habitat-empty{grid-column:1/-1;margin:0;padding:28px 12px;color:#6f8074;text-align:center;font-size:.8rem}
+.badge-summary{margin:21px 0 13px;padding:13px 15px;border-radius:10px;background:#edf3e9;color:var(--green-dark);font-size:.8rem;font-weight:800}
+.badge-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.badge-card{display:flex;align-items:flex-start;gap:12px;min-width:0;padding:15px;border:1px solid var(--line);border-radius:13px;background:#fafaf6}
+.badge-card.earned{border-color:#c9d9c1;background:#f0f5ec}
+.badge-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:13px;background:#ecefe8;font-size:1.25rem}
+.badge-card.earned .badge-icon{background:#e0ecd8}
+.badge-card h3{margin:1px 0 4px;font:700 .88rem var(--display)}
+.badge-card p{margin:0 0 6px;color:var(--muted);font-size:.69rem;line-height:1.5}
+.badge-status{color:var(--green);font-size:.65rem}
+.device-save-note{margin:19px 0 0;color:#818d83;font-size:.7rem}
+@media(max-width:800px){.mission-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.badge-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rescue-choices{grid-template-columns:1fr}}
+@media(max-width:620px){.feature-two-col{grid-template-columns:minmax(0,1fr)}.mission-grid{grid-template-columns:minmax(0,1fr)}.challenge-card{grid-template-columns:minmax(0,1fr)}.challenge-card .feature-kicker,.challenge-card h3,.challenge-card p,.challenge-card .button{grid-column:1;grid-row:auto}.challenge-card .button{width:100%}.builder-controls{align-items:stretch;flex-direction:column}.builder-controls select{width:100%;min-width:0}.habitat-palette{grid-template-columns:repeat(2,minmax(0,1fr))}.habitat-tile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.badge-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:360px){.habitat-palette,.habitat-tile-grid{grid-template-columns:minmax(0,1fr)}.spotlight-fact{align-items:flex-start;flex-direction:column;gap:2px}.spotlight-fact strong{text-align:left}}
