@@ -212,49 +212,104 @@ function renderDailyMissions(){
   }
 }
 const rescueStories=[
-  {title:"A bird is sitting near a path",prompt:"You notice a bird that seems hurt while people are walking nearby. What is the safest next step?",choices:["Keep a safe distance, ask an adult to contact a local wildlife rescue service, and give the bird space.","Pick it up and take it home.","Offer it food and water by hand."],answer:0,why:"Wild animals can be stressed or injured. Distance and trained local help are safer for both the animal and people."},
-  {title:"A wild animal is near the road",prompt:"A small wild animal is close to a busy road. What should you do?",choices:["Stay well away from traffic and ask an adult to contact local wildlife responders.","Run into the road and carry it across.","Chase it toward the trees."],answer:0,why:"Do not enter traffic or chase wildlife. Keep people back and ask a trusted adult to get local help."},
-  {title:"Wildlife gathers near school",prompt:"A wild animal has appeared where students are gathering. What is the best choice?",choices:["Give it space, move people away calmly, and tell a teacher or trusted adult.","Crowd around it to take photos.","Try to lure it closer with food."],answer:0,why:"A quiet space helps reduce stress. A trusted adult can decide whether local wildlife experts should be contacted."}
+  {id:"bird-path",title:"A bird beside the footpath",prompt:"A bird is sitting quietly beside a busy footpath. What should you do?",choices:["Move it somewhere quieter yourself.","Keep your distance and ask a trusted adult to contact local wildlife rescue.","Offer it food by hand."],answer:"Keep your distance and ask a trusted adult to contact local wildlife rescue.",why:"A calm space and trained local help are safer than handling a wild bird."},
+  {id:"hedgehog-road",title:"A hedgehog near a road",prompt:"You spot a hedgehog close to a road as cars pass. What is the safest choice?",choices:["Stay out of the road and tell an adult, who can contact local wildlife responders.","Chase it away from the traffic.","Pick it up and carry it across."],answer:"Stay out of the road and tell an adult, who can contact local wildlife responders.",why:"Never enter traffic or chase wildlife. A trusted adult can decide how to get local help safely."},
+  {id:"schoolyard-animal",title:"Wildlife near the schoolyard",prompt:"A wild animal appears where students are gathering. What should happen next?",choices:["Crowd around it to take photos.","Try to lure it closer with a snack.","Move away calmly, give it space, and tell a teacher."],answer:"Move away calmly, give it space, and tell a teacher.",why:"A quiet space reduces stress. A teacher can contact local wildlife experts if needed."},
+  {id:"baby-deer",title:"A young animal alone",prompt:"You see a young wild animal resting by itself. What is the best response?",choices:["Leave it undisturbed, keep your distance, and tell an adult if it seems hurt or in danger.","Pick it up because it must have been abandoned.","Stay nearby and keep checking on it."],answer:"Leave it undisturbed, keep your distance, and tell an adult if it seems hurt or in danger.",why:"Some young animals are left alone while their parent searches for food. Distance helps avoid disturbing them."},
+  {id:"bat-ground",title:"A bat on the ground",prompt:"A bat is resting on the ground near a building. What should you do?",choices:["Touch it gently to see if it can fly.","Keep people and pets away, do not touch it, and ask an adult to call local wildlife rescue.","Put a blanket over it."],answer:"Keep people and pets away, do not touch it, and ask an adult to call local wildlife rescue.",why:"Bats should not be handled. A trained local responder can advise what to do."},
+  {id:"nest-trail",title:"A nest beside a trail",prompt:"You notice a bird nest near a walking path. How can you help?",choices:["Move the nest farther into the trees.","Stay on the path, keep your distance, and let an adult know if the nest is damaged.","Touch the eggs to check if they are warm."],answer:"Stay on the path, keep your distance, and let an adult know if the nest is damaged.",why:"Keeping people back helps avoid disturbing nesting wildlife."},
+  {id:"turtle-road",title:"A turtle by the road",prompt:"A turtle is near a road, but you are not with an adult. What should you do?",choices:["Go into the road and move it yourself.","Ask a friend to stop traffic.","Stay well away from traffic and tell a trusted adult who can contact local responders."],answer:"Stay well away from traffic and tell a trusted adult who can contact local responders.",why:"Do not step into traffic or handle an unfamiliar wild animal. Get help from a safe place."},
+  {id:"fence-animal",title:"An animal caught in a fence",prompt:"A small animal seems caught in a garden fence. What is the safest choice?",choices:["Pull it free carefully.","Keep back and ask an adult to contact trained wildlife rescuers.","Cut the fence near the animal."],answer:"Keep back and ask an adult to contact trained wildlife rescuers.",why:"Pulling or cutting near an animal could make an injury worse. Trained help is safer."},
+  {id:"bins-wildlife",title:"An animal near outdoor bins",prompt:"A wild animal is searching around outdoor bins. What should you do?",choices:["Offer it food so it leaves the bins.","Try to scare it away by running toward it.","Keep your distance, do not feed it, and tell an adult or site staff."],answer:"Keep your distance, do not feed it, and tell an adult or site staff.",why:"Feeding wildlife can cause problems. People should give it space and ask an adult to handle the situation."},
+  {id:"shed-animal",title:"Wildlife inside a shed",prompt:"You notice a wild animal inside a shed. How should you respond?",choices:["Do not go in or corner it; move away and tell an adult.","Block the doorway so it cannot leave.","Try to guide it out with a broom."],answer:"Do not go in or corner it; move away and tell an adult.",why:"Give the animal room and let an adult decide whether local wildlife help is needed."},
+  {id:"beach-bird",title:"A seabird resting on the beach",prompt:"A seabird is resting on the sand while people walk nearby. What is a wildlife-friendly choice?",choices:["Carry it closer to the water.","Stay well back and tell a lifeguard or trusted adult if it appears injured.","Gather people around it to see what it does."],answer:"Stay well back and tell a lifeguard or trusted adult if it appears injured.",why:"Crowding can stress wildlife. A nearby adult can contact the right local organization."},
+  {id:"window-bird",title:"A bird after a window collision",prompt:"A bird is resting outside after hitting a window. What should you do?",choices:["Keep pets and people away and ask an adult to contact local wildlife rescue.","Pick it up immediately.","Try to make it fly by waving your hands."],answer:"Keep pets and people away and ask an adult to contact local wildlife rescue.",why:"A quiet area and advice from trained local help are safer than handling or startling the bird."}
 ];
-let rescueIndex=0;
+const rescueDeckKey="biobot-rescue-deck-v2";
+const rescueAwardsKey="biobot-rescue-awards-v2";
+function newRescueDeck(){return {order:shuffle(rescueStories.map(story=>story.id)),index:0};}
+function loadRescueDeck(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(rescueDeckKey)||"null");
+    const validOrder=Array.isArray(saved?.order)&&saved.order.length===rescueStories.length&&new Set(saved.order).size===rescueStories.length&&saved.order.every(id=>rescueStories.some(story=>story.id===id));
+    if(validOrder)return {order:saved.order,index:Math.max(0,Math.min(rescueStories.length,Number(saved.index)||0))};
+  }catch{}
+  return newRescueDeck();
+}
+function saveRescueDeck(){try{localStorage.setItem(rescueDeckKey,JSON.stringify(rescueDeck));}catch{}}
+function loadRescueAwards(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(rescueAwardsKey)||"null");
+    if(Array.isArray(saved))return saved;
+  }catch{}
+  const legacyIds=["bird-path","hedgehog-road","schoolyard-animal"];
+  try{
+    const legacy=JSON.parse(localStorage.getItem("biobot-rescue-stories-v1")||"[]");
+    return legacyIds.filter((id,index)=>Array.isArray(legacy)&&legacy.includes(index));
+  }catch{return [];}
+}
+let rescueDeck=loadRescueDeck();
+let rescueAwards=loadRescueAwards();
 function renderRescueStory(){
-  const story=rescueStories[rescueIndex];
-  document.getElementById("rescueProgress").textContent="Story "+(rescueIndex+1)+" of "+rescueStories.length;
-  document.getElementById("rescueTitle").textContent=story.title;
-  document.getElementById("rescuePrompt").textContent=story.prompt;
-  document.getElementById("rescueFeedback").textContent="";
-  document.getElementById("rescueFeedback").classList.remove("success");
-  document.getElementById("nextRescue").hidden=true;
+  const progress=document.getElementById("rescueProgress");
+  const title=document.getElementById("rescueTitle");
+  const prompt=document.getElementById("rescuePrompt");
+  const feedback=document.getElementById("rescueFeedback");
+  const next=document.getElementById("nextRescue");
   const root=document.getElementById("rescueChoices");
+  feedback.textContent="";
+  feedback.classList.remove("success");
   root.replaceChildren();
-  story.choices.forEach((choice,index)=>{
+  if(rescueDeck.index>=rescueDeck.order.length){
+    progress.textContent="Round complete · "+rescueStories.length+" / "+rescueStories.length;
+    title.textContent="Wildlife helper!";
+    prompt.textContent="You have seen every story in this round. Start a fresh shuffle when you are ready.";
+    feedback.textContent="Great work. This round had "+rescueStories.length+" different scenarios, with no repeats.";
+    feedback.classList.add("success");
+    next.textContent="Shuffle a new round ↻";
+    next.hidden=false;
+    return;
+  }
+  const storyId=rescueDeck.order[rescueDeck.index];
+  const story=rescueStories.find(item=>item.id===storyId);
+  progress.textContent="Story "+(rescueDeck.index+1)+" of "+rescueStories.length+" · no repeats this round";
+  title.textContent=story.title;
+  prompt.textContent=story.prompt;
+  next.textContent="Next story →";
+  next.hidden=true;
+  shuffle(story.choices).forEach(choice=>{
     const button=extraNode("button","qa-choice",choice);
     button.type="button";
     button.addEventListener("click",()=>{
-      root.querySelectorAll("button").forEach(item=>item.disabled=true);
-      const feedback=document.getElementById("rescueFeedback");
-      if(index===story.answer){
-        button.classList.add("is-correct");
-        feedback.textContent="Good choice! "+story.why;
-        feedback.classList.add("success");
-        let completed=[];try{completed=JSON.parse(localStorage.getItem("biobot-rescue-stories-v1")||"[]");}catch{}
-        if(!completed.includes(rescueIndex)){
-          completed.push(rescueIndex);
-          try{localStorage.setItem("biobot-rescue-stories-v1",JSON.stringify(completed));}catch{}
-          trackExtraActivity("rescueStories");
-          award(10);
-          feedback.textContent+=" +10 Bio points.";
-        }else feedback.textContent+=" You already earned points for this story.";
-      }else{
-        document.querySelector("#rescueChoices button:nth-child("+(story.answer+1)+")")?.classList.add("is-correct");
-        feedback.textContent="Try the safe-distance approach: "+story.why;
+      const correct=choice===story.answer;
+      if(!correct){
+        button.disabled=true;
+        feedback.textContent="Not quite. Think about keeping your distance and asking a trusted adult for help, then try another choice.";
+        feedback.classList.remove("success");
+        return;
       }
-      document.getElementById("nextRescue").hidden=false;
+      root.querySelectorAll("button").forEach(item=>item.disabled=true);
+      button.classList.add("is-correct");
+      feedback.textContent="Good choice! "+story.why;
+      feedback.classList.add("success");
+      if(!rescueAwards.includes(story.id)){
+        rescueAwards.push(story.id);
+        try{localStorage.setItem(rescueAwardsKey,JSON.stringify(rescueAwards));}catch{}
+        trackExtraActivity("rescueStories");
+        award(10);
+        feedback.textContent+=" +10 Bio points.";
+      }else feedback.textContent+=" You already earned points for this story.";
+      next.hidden=false;
     });
     root.append(button);
   });
 }
-document.getElementById("nextRescue").addEventListener("click",()=>{rescueIndex=(rescueIndex+1)%rescueStories.length;renderRescueStory();});
+document.getElementById("nextRescue").addEventListener("click",()=>{
+  if(rescueDeck.index>=rescueDeck.order.length)rescueDeck=newRescueDeck();
+  else rescueDeck.index++;
+  saveRescueDeck();
+  renderRescueStory();
+});
 const namedAnimals=[];
 const seenAnimalNames=new Set();
 species.forEach(record=>{
