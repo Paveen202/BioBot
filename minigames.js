@@ -143,9 +143,9 @@ function trackExtraActivity(type){
   checkExtraBadges();
 }
 const extraMissions=[
-  {id:"memoryPairs",title:"Memory keeper",description:"Match 3 animal name pairs.",goal:3},
-  {id:"quizCorrect",title:"Curious naturalist",description:"Answer 2 Animal Q&A questions correctly.",goal:2},
-  {id:"statusCorrect",title:"Red List spotter",description:"Get 2 Red List category matches right.",goal:2}
+  {id:"memoryPairs",title:"Memory keeper",description:"Match 3 animal name pairs.",goal:3,panel:"memoryPanel",playLabel:"Play memory"},
+  {id:"quizCorrect",title:"Curious naturalist",description:"Answer 2 Animal Q&A questions correctly.",goal:2,panel:"quizPanel",playLabel:"Play Q&A"},
+  {id:"statusCorrect",title:"Red List spotter",description:"Get 2 Red List category matches right.",goal:2,panel:"habitatPanel",playLabel:"Play Red List match"}
 ];
 const conservationChallenges=[
   {title:"Give wildlife space",copy:"If you see a wild animal today, enjoy watching from a distance. Never feed or handle it."},
@@ -172,17 +172,23 @@ function renderDailyMissions(){
     const fill=extraNode("span","mission-progress-fill");
     fill.style.width=Math.round(current/mission.goal*100)+"%";
     track.append(fill);
-    const button=extraNode("button","small-game-button",claimed?"Completed ✓":current>=mission.goal?"Claim +10 Bio points":Math.max(0,mission.goal-current)+" more to go");
+    const ready=current>=mission.goal;
+    const button=extraNode("button","small-game-button mission-action",claimed?"Completed ✓":ready?"Claim +10 Bio points":mission.playLabel+" →");
     button.type="button";
-    button.disabled=claimed||current<mission.goal;
+    button.disabled=claimed;
     button.addEventListener("click",()=>{
       if(button.disabled)return;
-      extraState.daily.claimed[mission.id]=true;
-      extraState.stats.dailyClaims++;
-      saveExtraState();
-      award(10);
-      renderDailyMissions();
-      checkExtraBadges();
+      if(ready){
+        extraState.daily.claimed[mission.id]=true;
+        extraState.stats.dailyClaims++;
+        saveExtraState();
+        award(10);
+        renderDailyMissions();
+        checkExtraBadges();
+      }else{
+        activatePanel(mission.panel,true);
+        requestAnimationFrame(()=>document.getElementById(mission.panel)?.scrollIntoView({behavior:"smooth",block:"start"}));
+      }
     });
     card.append(track,button);
     root.append(card);
