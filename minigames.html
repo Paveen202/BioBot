@@ -6,16 +6,22 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="BioBot">
-  <title>BioBot — Minigames</title><link rel="stylesheet" href="styles.css?v=minigames-conservation-1">
+  <title>BioBot — Minigames</title><link rel="stylesheet" href="styles.css?v=minigames-playable-2">
   <meta name="description" content="Play wildlife minigames, test animal knowledge, and learn about IUCN Red List categories.">
   <link rel="canonical" href="https://paveen202.github.io/BioBot/minigames.html">
 </head>
 <body>
   <header class="site-header"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">✳</span><span>biobot</span></a><nav class="main-nav" aria-label="Main navigation"><a href="index.html">Home</a><a href="animalpedia.html">Animalpedia</a><a href="merchandise.html">Merchandise</a><a href="tips.html">Tips</a><a href="disaster-risk.html">Disaster Risk</a><a href="pollution.html">Pollution</a><a href="settings.html">Settings</a><a href="bio-city.html">Bio City game</a></nav><a class="header-cta" href="index.html">Back to BioBot <span aria-hidden="true">↗</span></a></header>
   <main class="standalone-main">
-    <section class="games-hero"><p class="eyebrow">Wildlife play lab</p><h1>Animal <em>minigames</em></h1><p>Play animal games, take on daily conservation missions, make wildlife-safe choices, solve animal mysteries, and design a habitat — all in one place.</p><div class="game-score"><span aria-hidden="true">✳</span> <strong id="gameScore">0</strong> points</div></section>
-    <div class="game-tabs" role="tablist" aria-label="Choose a minigame"><button class="game-tab active" role="tab" id="memoryTab" aria-selected="true" aria-controls="memoryPanel">Animal memory</button><button class="game-tab" role="tab" id="quizTab" aria-selected="false" aria-controls="quizPanel">Animal Q&amp;A</button><button class="game-tab" role="tab" id="habitatTab" aria-selected="false" aria-controls="habitatPanel">Red List match</button><button class="game-tab" role="tab" id="missionsTab" aria-selected="false" aria-controls="missionsPanel">Daily missions</button><button class="game-tab" role="tab" id="rescueTab" aria-selected="false" aria-controls="rescuePanel">Rescue story</button><button class="game-tab" role="tab" id="mysteryTab" aria-selected="false" aria-controls="mysteryPanel">Mystery &amp; spotlight</button><button class="game-tab" role="tab" id="builderTab" aria-selected="false" aria-controls="builderPanel">Habitat builder</button><button class="game-tab" role="tab" id="badgesTab" aria-selected="false" aria-controls="badgesPanel">Badges</button><a class="game-tab game-tab-link" href="bio-city.html">🏞️ Bio City</a></div>
-    <section class="game-panel active" id="memoryPanel" role="tabpanel" aria-labelledby="memoryTab">
+    <section class="games-hero"><p class="eyebrow">Wildlife play lab</p><h1>Animal <em>minigames</em></h1><p>Start with today’s missions, then play animal games, make wildlife-safe choices, solve mysteries, and design a habitat — all in one place.</p><div class="game-score"><span aria-hidden="true">✳</span> <strong id="gameScore">0</strong> Bio points</div></section>
+    <section class="top-rewards" aria-labelledby="badgesHeading"><div class="top-rewards-heading"><div><p class="game-number">BADGES &amp; AWARDS</p><h2 id="badgesHeading">Your wildlife explorer badges</h2></div><p id="badgeSummary" aria-live="polite">0 of 7 badges earned</p></div><div class="badge-grid badge-strip" id="badgeGrid"></div><p class="device-save-note">Earn a badge by playing. Each badge gives 15 Bio points.</p></section>
+    <div class="game-tabs" role="tablist" aria-label="Choose a game or activity"><button class="game-tab active" role="tab" id="missionsTab" aria-selected="true" aria-controls="missionsPanel">Daily missions</button><button class="game-tab" role="tab" id="memoryTab" aria-selected="false" aria-controls="memoryPanel">Animal memory</button><button class="game-tab" role="tab" id="quizTab" aria-selected="false" aria-controls="quizPanel">Animal Q&amp;A</button><button class="game-tab" role="tab" id="habitatTab" aria-selected="false" aria-controls="habitatPanel">Red List match</button><button class="game-tab" role="tab" id="rescueTab" aria-selected="false" aria-controls="rescuePanel">Rescue story</button><button class="game-tab" role="tab" id="mysteryTab" aria-selected="false" aria-controls="mysteryPanel">Mystery &amp; spotlight</button><button class="game-tab" role="tab" id="builderTab" aria-selected="false" aria-controls="builderPanel">Habitat builder</button><a class="game-tab game-tab-link" href="bio-city.html">🏞️ Bio City</a></div>
+    <section class="game-panel active" id="missionsPanel" role="tabpanel" aria-labelledby="missionsTab">
+      <div class="panel-heading"><div><p class="game-number">DAILY MISSIONS + CONSERVATION CHALLENGE</p><h2>Small steps, wild impact</h2><p>Play the existing games to fill today’s missions, then choose one simple conservation action.</p></div></div>
+      <div class="mission-grid" id="dailyMissions"></div>
+      <article class="challenge-card" id="dailyChallenge" aria-live="polite"></article>
+    </sect
+    <section class="game-panel" id="memoryPanel" role="tabpanel" aria-labelledby="memoryTab" hidden>
       <div class="panel-heading"><div><p class="game-number">MEMORY MATCH</p><h2>Match animal names</h2><p>Pair a common name with its scientific name. Four levels, from 3 pairs to 12 pairs.</p></div><label class="level-picker">Choose a level<select id="memoryLevel"><option value="1">Level 1 · 3 pairs</option><option value="2">Level 2 · 6 pairs</option><option value="3">Level 3 · 8 pairs</option><option value="4">Level 4 · 12 pairs</option></select></label></div>
       <div class="memory-status"><span id="memoryMoves">Moves: 0</span><span id="memoryMatches">Pairs: 0 / 3</span><button class="small-game-button" id="resetMemory" type="button">Restart level</button></div><div class="memory-board" id="memoryBoard" aria-label="Animal and habitat memory cards"></div><p class="game-feedback" id="memoryFeedback" aria-live="polite">Find each animal’s habitat match.</p>
     </section>
@@ -25,11 +31,7 @@
     <section class="game-panel" id="habitatPanel" role="tabpanel" aria-labelledby="habitatTab" hidden>
       <div class="panel-heading"><div><p class="game-number">RED LIST MATCH · 10 ROUNDS</p><h2>Choose the IUCN category</h2><p id="habitatPrompt">Choose a species to begin.</p></div><button class="button button-primary" id="startHabitat" type="button">Start category match <span aria-hidden="true">→</span></button></div><div class="habitat-animal" id="habitatAnimal"></div><div class="qa-options" id="habitatOptions"></div><p class="game-feedback" id="habitatFeedback" aria-live="polite"></p><div class="qa-footer"><span id="habitatProgress">10 species categories to match.</span><button class="small-game-button" id="nextHabitat" type="button" hidden>Next species →</button></div>
     </section>
-    <section class="game-panel" id="missionsPanel" role="tabpanel" aria-labelledby="missionsTab" hidden>
-      <div class="panel-heading"><div><p class="game-number">DAILY MISSIONS + CONSERVATION CHALLENGE</p><h2>Small steps, wild impact</h2><p>Play the existing games to fill today’s missions, then choose one simple conservation action.</p></div></div>
-      <div class="mission-grid" id="dailyMissions"></div>
-      <article class="challenge-card" id="dailyChallenge" aria-live="polite"></article>
-    </section>
+ion>
     <section class="game-panel" id="rescuePanel" role="tabpanel" aria-labelledby="rescueTab" hidden>
       <div class="panel-heading"><div><p class="game-number">WILDLIFE RESCUE STORY</p><h2>What would you do?</h2><p>Practice calm, wildlife-safe choices. In real situations, keep your distance and ask a trusted adult to contact a local wildlife rescue service.</p></div></div>
       <article class="rescue-card">
@@ -51,11 +53,7 @@
       <h3 class="builder-subheading">Add or remove features</h3><div class="habitat-palette" id="habitatPalette"></div>
       <section class="habitat-plot" id="habitatPlot" aria-label="Your habitat design"></section>
     </section>
-    <section class="game-panel" id="badgesPanel" role="tabpanel" aria-labelledby="badgesTab" hidden>
-      <div class="panel-heading"><div><p class="game-number">ACHIEVEMENTS</p><h2>Wildlife explorer badges</h2><p>Earn badges by playing, learning, and creating. Badges reward Bio points, and no real-money purchases are involved.</p></div></div>
-      <div class="badge-summary" id="badgeSummary" aria-live="polite"></div><div class="badge-grid" id="badgeGrid"></div>
-      <p class="device-save-note">Daily missions, badges, and habitat designs are saved on this device. Bio points are saved to your profile.</p>
-    </section>
+ion>
     <p class="games-backlink"><a class="text-link" href="index.html">← Back to BioBot</a><a class="text-link" href="animalpedia.html">Explore Animalpedia →</a></p>
   </main>
   <script src="iucn-animals-1000.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="profile.js"></script><script src="minigames.js"></script>
