@@ -310,3 +310,31 @@ html[data-reduce-motion="true"] *,html[data-reduce-motion="true"] *::before,html
 .tips-list li::marker{color:var(--green);font-weight:800}
 @media(max-width:900px){.tips-grid{grid-template-columns:minmax(0,1fr)}.tips-category-wide{grid-column:auto}}
 @media(max-width:560px){.tips-hero{padding:34px 0 25px}.tips-hero h1{font-size:clamp(2.45rem,10vw,3.4rem)}.tips-category{padding:18px}.tips-list{gap:8px}}
+
+
+/* Disaster risk learning page */
+.risk-hero{max-width:940px;padding:54px 0 30px}
+.risk-hero h1{margin:0;font:600 clamp(2.55rem,5.6vw,4.4rem)/1.04 var(--display);letter-spacing:-.07em}
+.risk-hero h1 em{color:var(--green);font-style:normal}
+.risk-hero>p:not(.eyebrow){max-width:790px;margin:16px 0 22px;color:var(--muted);font-size:1.02rem}
+.risk-callout{display:grid;gap:5px;padding:18px 20px;border:1px solid #cfdcc9;border-radius:14px;background:#e9f0e4;color:var(--green-dark)}
+.risk-callout span{font-size:.86rem;line-height:1.65}
+.risk-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0 0 42px}
+.risk-card{padding:23px;border:1px solid var(--line);border-radius:17px;background:var(--paper);box-shadow:var(--shadow)}
+.risk-kicker{margin:0 0 8px;color:var(--green);font-size:.67rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.risk-card h2,.risk-action h2,.risk-sources h2{margin:0;font:700 1.25rem/1.3 var(--display);letter-spacing:-.035em}
+.risk-card>p:last-child{margin:10px 0 0;color:var(--muted);font-size:.86rem;line-height:1.7}
+.risk-action{padding:clamp(22px,4vw,34px);margin:0 0 35px;border:1px solid var(--line);border-radius:18px;background:#fffefa}
+.risk-action h2{font-size:1.8rem}
+.risk-actions-list{display:grid;gap:13px;margin:20px 0;padding-left:22px}
+.risk-actions-list li{padding-left:4px;color:var(--muted);font-size:.88rem;line-height:1.7}
+.risk-actions-list li::marker{color:var(--green)}
+.risk-actions-list strong{color:var(--ink)}
+.risk-note{margin:0;padding:14px 16px;border-left:3px solid var(--green);background:#eff4eb;color:var(--green-dark);font-size:.84rem;line-height:1.65}
+.risk-sources{padding:24px 0 42px;border-top:1px solid var(--line)}
+.risk-sources>p{color:var(--muted);font-size:.84rem}
+.risk-sources ul{display:flex;flex-wrap:wrap;gap:10px 20px;padding-left:18px}
+.risk-sources li{color:var(--green)}
+.risk-sources a{color:var(--green-dark);font-size:.82rem;font-weight:700}
+@media(max-width:900px){.risk-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.risk-hero{padding:34px 0 25px}.risk-card{padding:18px}.risk-action{padding:20px}}
