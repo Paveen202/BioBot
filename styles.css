@@ -338,3 +338,36 @@ html[data-reduce-motion="true"] *,html[data-reduce-motion="true"] *::before,html
 .risk-sources a{color:var(--green-dark);font-size:.82rem;font-weight:700}
 @media(max-width:900px){.risk-grid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.risk-hero{padding:34px 0 25px}.risk-card{padding:18px}.risk-action{padding:20px}}
+
+
+/* Pollution learning page */
+.pollution-hero{max-width:930px;padding:54px 0 30px}
+.pollution-hero h1{margin:0;font:600 clamp(2.65rem,5.8vw,4.5rem)/1.04 var(--display);letter-spacing:-.07em}
+.pollution-hero h1 em{color:var(--green);font-style:normal}
+.pollution-hero>p:not(.eyebrow){max-width:800px;margin:16px 0 22px;color:var(--muted);font-size:1.02rem;line-height:1.75}
+.pollution-note{display:grid;gap:5px;padding:17px 19px;border:1px solid #cfdcc9;border-radius:14px;background:#e9f0e4;color:var(--green-dark)}
+.pollution-note span{font-size:.84rem;line-height:1.65}
+.pollution-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:0 0 44px}
+.pollution-card{min-width:0;padding:22px;border:1px solid var(--line);border-radius:17px;background:var(--paper);box-shadow:var(--shadow)}
+.pollution-type{margin:0 0 8px;color:var(--green);font-size:.66rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.pollution-card h2,.other-threats h2,.pollution-actions h2,.pollution-sources h2{margin:0;font:700 1.22rem/1.3 var(--display);letter-spacing:-.035em}
+.pollution-card p:not(.pollution-type){margin:10px 0 0;color:var(--muted);font-size:.82rem;line-height:1.7}
+.pollution-card strong{color:var(--ink)}
+.other-threats{padding:30px 0 44px;border-top:1px solid var(--line)}
+.other-threats h2,.pollution-actions h2{font-size:1.8rem}
+.other-threats-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:19px}
+.other-threats-grid article{display:flex;align-items:flex-start;gap:13px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+.other-threats-grid article>span{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;border-radius:11px;background:#e9f0e4;font-size:1.25rem}
+.other-threats-grid h3{margin:0 0 4px;font:700 .92rem var(--display)}
+.other-threats-grid p{margin:0;color:var(--muted);font-size:.78rem;line-height:1.6}
+.pollution-actions{padding:clamp(22px,4vw,34px);margin:0 0 34px;border:1px solid var(--line);border-radius:18px;background:#fffefa}
+.pollution-actions ul{display:grid;gap:11px;margin:18px 0 0;padding-left:22px}
+.pollution-actions li{padding-left:4px;color:var(--muted);font-size:.86rem;line-height:1.7}
+.pollution-actions li::marker{color:var(--green)}
+.pollution-sources{padding:24px 0 42px;border-top:1px solid var(--line)}
+.pollution-sources>h2{font-size:1.2rem}
+.pollution-sources ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 22px;padding-left:18px}
+.pollution-sources li{color:var(--green)}
+.pollution-sources a{color:var(--green-dark);font-size:.8rem;font-weight:700}
+@media(max-width:900px){.pollution-grid,.other-threats-grid,.pollution-sources ul{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.pollution-hero{padding:34px 0 25px}.pollution-card{padding:18px}.pollution-actions{padding:20px}}
