@@ -8,7 +8,7 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>Pollution &amp; Threats to Nature — BioBot</title>
   <meta name="description" content="Learn about natural and human-made pollution, how it harms ecosystems, and how poaching, overhunting, and careless actions also threaten wildlife.">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=sitewide-conservation-1">
 </head>
 <body>
 <header class="site-header">
@@ -35,19 +35,19 @@
   </section>
 
   <section class="pollution-grid" aria-label="Major types of pollution">
-    <article class="pollution-card">
+    <article class="pollution-card" id="air-pollution">
       <p class="pollution-type">01 · Air</p>
       <h2>Air pollution</h2>
       <p><strong>Sources:</strong> Vehicle exhaust, power plants, industry, cooking and heating fuels, and burning waste. Wildfires, dust storms, and volcanoes can also release smoke, particles, or gases.</p>
       <p><strong>Effects:</strong> Polluted air can harm people, wildlife, crops, forests, and climate. Some pollutants settle onto soil and water.</p>
     </article>
-    <article class="pollution-card">
+    <article class="pollution-card" id="water-pollution">
       <p class="pollution-type">02 · Freshwater and oceans</p>
       <h2>Water pollution</h2>
       <p><strong>Sources:</strong> Untreated sewage, industrial discharges, oil and fuel spills, mining waste, farm runoff, and litter carried by drains and rivers. Natural erosion can also add sediment.</p>
       <p><strong>Effects:</strong> Contaminants can poison aquatic life, damage habitats, and make water unsafe for people and animals.</p>
     </article>
-    <article class="pollution-card">
+    <article class="pollution-card" id="soil-pollution">
       <p class="pollution-type">03 · Land and soil</p>
       <h2>Soil pollution</h2>
       <p><strong>Sources:</strong> Pesticides, excess fertilizers, mining, leaking fuel or chemicals, and poorly managed rubbish. Some harmful elements also occur naturally in rocks and soil.</p>
@@ -108,19 +108,20 @@
     </div>
   </section>
 
-  <section class="pollution-actions">
+  <section class="pollution-actions" id="pollution-actions">
     <p class="eyebrow">Small actions and bigger changes</p>
     <h2>How can we help?</h2>
     <ul>
       <li>Use less disposable packaging, reuse what you can, and sort waste according to local rules.</li>
       <li>Never pour oil, paint, medicines, or chemicals down drains; use local safe-disposal programs.</li>
-      <li>Save energy and choose cleaner transport when available to reduce pollution from burning fuels.</li>
+      <li>Switch off unused lights and devices, save energy, and choose cleaner transport when practical to reduce pollution from burning fuels.</li>
       <li>Use garden chemicals carefully and follow local guidance on fertilizers and pesticides.</li>
       <li>Keep outdoor lights pointed downward and switch them off when not needed.</li>
       <li>Respect wildlife: keep a safe distance, do not buy products made from threatened species, and report suspected wildlife crime to local authorities.</li>
-      <li>Support clean water, wildlife protection, and responsible waste-management efforts in your community.</li>
+      <li>Use water thoughtfully and support clean water, native plant life, wildlife protection, and responsible waste-management efforts in your community.</li>
     </ul>
-  </section>
+    </section>
+  <section class="pollution-conservation-bridge"><p class="eyebrow">Protect the systems that keep nature healthy</p><h2>Pollution prevention is part of conservation</h2><p>Keeping waterways clean, protecting soil and plant life, and reducing pollution from energy use all help wildlife. Saving water and electricity also reduces pressure on the natural systems that supply them.</p><div><a class="text-link" href="tips.html#save-resources">Water and energy tips →</a><a class="text-link" href="tips.html#wildlife-at-home">Plant and habitat tips →</a></div></section>
 
   <section class="pollution-sources" aria-labelledby="pollutionSourcesTitle">
     <h2 id="pollutionSourcesTitle">Learn more from science and conservation sources</h2>
@@ -138,6 +139,6 @@
   <footer class="site-footer"><a href="index.html">← Back to BioBot</a></footer>
 </main>
 <script src="custom-background.js"></script>
-<script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-</body>
+
+<script src="conservation-toolkit.js?v=sitewide-conservation-1"></script><script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js?v=35",{updateViaCache:"none"}).catch(() => {}));</script></body>
 </html>
