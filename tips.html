@@ -8,7 +8,7 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>50 Tips for Conservation — BioBot</title>
   <meta name="description" content="Explore 50 practical ways to support wildlife, reduce waste, and care for nature.">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=sitewide-conservation-1">
 </head>
 <body>
 <header class="site-header">
@@ -28,9 +28,10 @@
   <section class="tips-hero">
     <p class="eyebrow">Small steps, shared impact</p>
     <h1>50 Tips for <em>Conservation</em></h1>
-    <p>Practical ways to care for wildlife and the places we share. Start with one that fits your life, then build from there.</p>
+    <p>Practical ways to protect plants and wildlife, save water and energy, and care for the places we share. Start with one action that fits your life.</p>
     <a class="button button-primary" href="#conservation-tips">Explore the tips <span aria-hidden="true">↓</span></a>
   </section>
+  <section class="tips-pillars" id="conservation-pillars" aria-label="Four conservation priorities"><div><p class="eyebrow">Four connected priorities</p><h2>Protect plants. Save water. Use power wisely. Care for nature.</h2><p>The 50 tips below include small actions for each of these shared needs.</p></div><div class="tips-pillar-links"><a href="#wildlife-at-home"><span>🌱</span><strong>Plants</strong><small>Support local plant life.</small></a><a href="#save-resources"><span>💧</span><strong>Water</strong><small>Use fresh water thoughtfully.</small></a><a href="#save-resources"><span>⚡</span><strong>Power</strong><small>Reduce avoidable energy use.</small></a><a href="#help-your-community"><span>🌳</span><strong>Nature</strong><small>Protect connected habitats.</small></a></div></section>
   <div class="tips-grid" id="conservation-tips">
     <article class="tips-category" id="wildlife-at-home">
       <p class="tips-range">01 — 10</p>
@@ -121,6 +122,6 @@
   <footer class="site-footer"><a href="index.html">← Back to BioBot</a></footer>
 </main>
 <script src="custom-background.js"></script>
-<script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));</script>
-</body>
+
+<script src="conservation-toolkit.js?v=sitewide-conservation-1"></script><script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js?v=35",{updateViaCache:"none"}).catch(() => {}));</script></body>
 </html>

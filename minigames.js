@@ -150,8 +150,16 @@ const extraMissions=[
 const conservationChallenges=[
   {title:"Give wildlife space",copy:"If you see a wild animal today, enjoy watching from a distance. Never feed or handle it."},
   {title:"Share a species fact",copy:"Tell someone one new thing you learned about an animal in BioBot."},
-  {title:"Save a little energy",copy:"Switch off one light or device that no one is using."},
-  {title:"Choose a reusable item",copy:"Use a reusable bottle or bag once today, if one is available."}
+  {title:"Save a little power",copy:"Switch off a light or device that no one is using, if it is safe to do so."},
+  {title:"Choose a reusable item",copy:"Use a reusable bottle or bag once today, if one is available."},
+  {title:"Care for a local plant",copy:"Find out the name of one plant native to your area, or help care for one you already have."},
+  {title:"Make a pollinator stop",copy:"If you have a suitable space, ask about growing a locally native flower for pollinators."},
+  {title:"Use water thoughtfully",copy:"Turn off the tap while brushing your teeth or washing up."},
+  {title:"Notice a water leak",copy:"Tell a trusted adult if you spot a dripping tap or running toilet that needs attention."},
+  {title:"Protect a habitat",copy:"Stay on the path during a walk and leave plants, nests, and natural materials undisturbed."},
+  {title:"Use daylight",copy:"Open curtains or blinds for daylight and switch off a light that is not needed."},
+  {title:"Water a plant carefully",copy:"If you care for a garden, water the soil when it is cooler rather than watering leaves or pavement."},
+  {title:"Learn about a local nature place",copy:"Find a nearby river, wetland, park, or woodland and one way people help protect it."}
 ];
 function challengeForToday(){
   const seed=extraTodayKey().split("").reduce((sum,char)=>sum+char.charCodeAt(0),0);
