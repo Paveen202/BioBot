@@ -16,7 +16,7 @@
     const query = new URLSearchParams(location.search);
     query.set("battle", "1");
     document.getElementById("battleView").src = `bio-city.html?${query.toString()}`;
-    const tips=["Keep an eye on both health bars. A good move at the right time can turn the match around.","Try a defensive move when your animal is low on health.","A stronger attack can deal more damage, but healing may help you last longer.","Your chosen habitat sets the scene for this match.","Watch the battle log to see how armor changes each hit."];
+    const tips=["Keep an eye on both health bars. A good move at the right time can turn the match around.","Try a defensive move when your animal is low on health.","Healthy habitats need clean water and plant life as well as safe space for wildlife.","Saving energy and reducing pollution can help protect the natural systems animals rely on.","Your chosen habitat sets the scene for this match."];
     let tipIndex=0;const tipTimer=setInterval(()=>{tipIndex=(tipIndex+1)%tips.length;document.getElementById("loadingTip").textContent=tips[tipIndex];},2400);
     window.addEventListener("message", event => {
       if (event.origin !== location.origin) return;
