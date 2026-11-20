@@ -1,0 +1,10 @@
+(() => {
+  const main=document.querySelector("main");
+  if(!main||main.querySelector(".conservation-corner"))return;
+  const section=document.createElement("section");
+  section.className="conservation-corner";
+  section.setAttribute("aria-labelledby","conservationCornerTitle");
+  section.innerHTML='<div class="conservation-corner-top"><div><p class="eyebrow">Water · Plants · Power · Nature</p><h2 id="conservationCornerTitle">Small actions help the places wildlife needs</h2><p>Explore four everyday ways to care for shared natural systems.</p></div><details class="conservation-corner-details"><summary>See conservation actions</summary><div class="conservation-action-grid"><article><span aria-hidden="true">💧</span><h3>Save water</h3><p>Turn off taps when not in use, fix drips, and water gardens when less will evaporate.</p><a href="tips.html#save-resources">More water tips →</a></article><article><span aria-hidden="true">🌱</span><h3>Protect plant life</h3><p>Choose plants suited to your region and make room for flowers, trees, and soil life.</p><a href="tips.html#wildlife-at-home">More planting tips →</a></article><article><span aria-hidden="true">⚡</span><h3>Use power thoughtfully</h3><p>Switch off unused lights and devices. Choose efficient options and lower-emission travel when practical.</p><a href="tips.html#save-resources">More energy tips →</a></article><article><span aria-hidden="true">🌳</span><h3>Care for nature</h3><p>Stay on trails, give wildlife space, and support local habitat care with trusted guidance.</p><a href="tips.html#help-your-community">More nature tips →</a></article></div></details></div>';
+  const footer=Array.from(main.children).find(child=>child.classList?.contains("site-footer"));
+  if(footer)footer.before(section);else main.append(section);
+})();
