@@ -7,6 +7,35 @@ const $=id=>document.getElementById(id);
 const grid=$('plantGrid'), search=$('plantSearch'), status=$('plantStatus');
 const normalize=v=>String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 const categoryCode=v=>({extinct:'EX','extinct in the wild':'EW','critically endangered':'CR','endangered':'EN','vulnerable':'VU','near threatened':'NT','least concern':'LC','data deficient':'DD'})[normalize(v)]||'';
+const photoCache=new Map(),photoQueue=[];let photoWorkerRunning=false;
+function requestPlantPhoto(record,photoBox,name){
+ if(document.getElementById('plantsPanel')?.hidden)return;
+ const query=record.scientificName?record.scientificName.trim().split(/\s+/).slice(0,2).join(' '):record.commonName;
+ if(!query)return;const key=normalize(query);
+ if(photoCache.has(key)){const cached=photoCache.get(key);if(cached)showPlantPhoto(cached,photoBox,name);return;}
+ photoQueue.push({key,query,photoBox,name});runPlantPhotoQueue();
+}
+async function runPlantPhotoQueue(){
+ if(photoWorkerRunning)return;photoWorkerRunning=true;
+ while(photoQueue.length){
+  const batch=photoQueue.splice(0,4);
+  await Promise.all(batch.map(async item=>{try{
+   const response=await fetch(`https://api.inaturalist.org/v1/taxa/autocomplete?q=${encodeURIComponent(item.query)}&per_page=1`);
+   if(!response.ok){photoCache.set(item.key,null);return;}
+   const matches=await response.json(),taxon=matches.find(t=>normalize(t.name)===item.key&&t.default_photo?.medium_url);
+   if(!taxon){photoCache.set(item.key,null);return;}
+   const photo={url:taxon.default_photo.medium_url,attribution:taxon.default_photo.attribution||'iNaturalist'};photoCache.set(item.key,photo);
+   if(item.photoBox.isConnected)showPlantPhoto(photo,item.photoBox,item.name);
+  }catch(_){photoCache.set(item.key,null);}}));
+  if(photoQueue.length)await new Promise(resolve=>setTimeout(resolve,4000));
+ }
+ photoWorkerRunning=false;
+}
+function showPlantPhoto(photo,photoBox,name){
+ if(!photoBox.isConnected||photoBox.querySelector('img'))return;
+ const img=document.createElement('img');img.src=photo.url;img.alt=`Photo of ${name}`;img.loading='lazy';img.onerror=()=>img.remove();photoBox.prepend(img);
+ const credit=document.createElement('span');credit.className='pedia-photo-credit';credit.textContent=photo.attribution;photoBox.append(credit);
+}
 function parseCSV(text){
  const rows=[];let row=[],cell='',quoted=false;
  for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'&&quoted&&n==='"'){cell+='"';i++;}else if(c==='"'){quoted=!quoted;}else if(c===','&&!quoted){row.push(cell);cell='';}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&n==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell='';}else cell+=c;}
@@ -55,7 +84,7 @@ function renderList(){
  grid.replaceChildren();const q=normalize(search.value);
  const filtered=records.filter(r=>(activeCategory==='All'||r.category===activeCategory)&&(!q||normalize([r.commonName,r.scientificName,r.category,r.family,r.genus].join(' ')).includes(q)));
  const pages=Math.max(1,Math.ceil(filtered.length/pageSize));page=Math.min(page,pages);const start=(page-1)*pageSize;
- filtered.slice(start,start+pageSize).forEach(r=>{const card=document.createElement('article');card.className='pedia-card';const photo=document.createElement('div');photo.className='pedia-photo';const icon=document.createElement('span');icon.className='pedia-emoji';icon.textContent='🌿';photo.append(icon);const top=document.createElement('div');top.className='pedia-card-top';const pill=document.createElement('span');const code=categoryCode(r.category);pill.className='category-pill category-pill-'+code.toLowerCase();pill.textContent=r.category||'Category unavailable';top.append(pill);photo.append(top);const name=document.createElement('h3');name.textContent=r.commonName||r.scientificName;const sci=document.createElement('p');sci.className='pedia-scientific';sci.textContent=r.commonName&&r.scientificName!==r.commonName?r.scientificName:'';const facts=document.createElement('p');facts.className='pedia-facts';facts.textContent=[r.family,r.assessmentYear?'Assessed '+r.assessmentYear:''].filter(Boolean).join(' · ')||'Global IUCN plant assessment';const link=document.createElement('button');link.type='button';link.className='pedia-link';link.textContent='Open plant wiki →';link.addEventListener('click',()=>showEntry(r));card.append(photo,name,sci,facts,link);grid.append(card);});
+ filtered.slice(start,start+pageSize).forEach(r=>{const card=document.createElement('article');card.className='pedia-card';const photo=document.createElement('div');photo.className='pedia-photo';const icon=document.createElement('span');icon.className='pedia-emoji';icon.textContent='🌿';photo.append(icon);const top=document.createElement('div');top.className='pedia-card-top';const pill=document.createElement('span');const code=categoryCode(r.category);pill.className='category-pill category-pill-'+code.toLowerCase();pill.textContent=r.category||'Category unavailable';top.append(pill);photo.append(top);const name=document.createElement('h3');name.textContent=r.commonName||r.scientificName;const sci=document.createElement('p');sci.className='pedia-scientific';sci.textContent=r.commonName&&r.scientificName!==r.commonName?r.scientificName:'';const facts=document.createElement('p');facts.className='pedia-facts';facts.textContent=[r.family,r.assessmentYear?'Assessed '+r.assessmentYear:''].filter(Boolean).join(' · ')||'Global IUCN plant assessment';const link=document.createElement('button');link.type='button';link.className='pedia-link';link.textContent='Open plant wiki →';link.addEventListener('click',()=>showEntry(r));card.append(photo,name,sci,facts,link);grid.append(card);requestPlantPhoto(r,photo,name.textContent);});
  if(!filtered.length){const empty=document.createElement('div');empty.className='pedia-empty';empty.textContent=records.length?'No plants match that search or category.':'No plant records loaded yet. Load an IUCN plant CSV above.';grid.append(empty);}
  $('plantSummary').textContent=filtered.length+' plants match · '+records.length+' records loaded.';
  $('plantPageSummary').textContent=filtered.length?(start+1)+'–'+Math.min(start+pageSize,filtered.length)+' of '+filtered.length:'0 results';
@@ -66,6 +95,7 @@ search.addEventListener('input',()=>{page=1;renderList();});
 $('plantPrevious').addEventListener('click',()=>{page=Math.max(1,page-1);renderList();});
 $('plantNext').addEventListener('click',()=>{page++;renderList();});
 if(records.length){search.disabled=false;$('plantCount').textContent=records.length.toLocaleString()+' plants · IUCN '+meta.version;status.textContent='Loaded '+records.length.toLocaleString()+' plant assessments from the IUCN '+meta.version+' sample.';$('plantChartSubtitle').textContent='IUCN category distribution across '+records.length.toLocaleString()+' plant assessments.';}
+document.addEventListener('floaunapedia-tabchange',e=>{if(e.detail==='plants')renderList();});
 document.querySelectorAll('[data-close-plant]').forEach(el=>el.addEventListener('click',()=>{$('plantModal').hidden=true;document.body.classList.remove('pedia-modal-open');}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('plantModal').hidden){$('plantModal').hidden=true;document.body.classList.remove('pedia-modal-open');}});
 renderFilters();renderChart();renderList();
