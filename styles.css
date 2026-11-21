@@ -535,3 +535,25 @@ html[data-reduce-motion="true"] *,html[data-reduce-motion="true"] *::before,html
 @media(max-width:850px){.conservation-action-grid,.home-conservation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tips-pillars{grid-template-columns:1fr}.pedia-conservation{grid-template-columns:1fr}.pedia-conservation-links{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.conservation-corner-top{grid-template-columns:1fr;align-items:start}.conservation-corner-details summary{min-height:40px}.conservation-action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-conservation{margin:38px 0}.home-conservation-grid{gap:8px}.home-conservation-grid a{padding:12px}.tips-pillar-links{grid-template-columns:repeat(2,minmax(0,1fr))}.tips-pillars{gap:16px}.pedia-conservation-links{grid-template-columns:1fr}.biocity-conservation-actions{grid-template-columns:1fr}}
 @media(max-width:360px){.conservation-action-grid,.home-conservation-grid{grid-template-columns:1fr}.biocity-conservation-links{align-items:stretch;flex-direction:column}.biocity-conservation-links .button{width:100%}}
+
+
+/* Plantpedia additions — matching the Animalpedia catalogue */
+.pedia-filters{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 22px}
+.pedia-filters .small-game-button.is-active{background:var(--green-dark);border-color:var(--green-dark);color:#fff}
+.pedia-filters .small-game-button{font-size:.72rem}
+.chart-empty,.pedia-empty{grid-column:1/-1;padding:28px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);text-align:center;background:#fffefa}
+.plant-wiki-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 0}
+.plant-wiki-fact{padding:14px;border:1px solid var(--line);border-radius:12px;background:#fffefa}
+.plant-wiki-fact h3{margin:0 0 7px;color:var(--green-dark);font:700 .82rem var(--display)}
+.plant-wiki-fact p{margin:0;color:var(--muted);font-size:.76rem;line-height:1.65}
+.pedia-modal-open{overflow:hidden}
+.pedia-modal[hidden]{display:none}
+.pedia-modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px}
+.pedia-modal-backdrop{position:absolute;inset:0;background:#17251dcc}
+.pedia-modal-card{position:relative;z-index:1;width:min(760px,100%);max-height:min(88vh,900px);overflow:auto;padding:clamp(20px,4vw,34px);border:1px solid var(--line);border-radius:18px;background:#f8f7ef;box-shadow:0 20px 70px #0003}
+.pedia-modal-card h2{margin:12px 40px 5px 0;font:700 clamp(1.5rem,4vw,2.3rem)/1.1 var(--display);letter-spacing:-.05em}
+.pedia-modal-close{position:absolute;right:16px;top:12px;width:38px;height:38px;border:1px solid var(--line);border-radius:50%;background:#fffefa;color:var(--green-dark);font-size:1.5rem;cursor:pointer}
+.pedia-link{display:inline-flex;margin-top:10px;padding:8px 0;border:0;background:transparent;color:var(--green);font-size:.76rem;font-weight:800;cursor:pointer}
+.pedia-card .pedia-photo{background:linear-gradient(135deg,#e6efe1,#f4f1e4)}
+.pedia-card .pedia-emoji{font-size:3rem}
+@media(max-width:620px){.plant-wiki-facts{grid-template-columns:1fr}.pedia-modal{padding:9px}.pedia-modal-card{max-height:94vh}}
