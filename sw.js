@@ -1,9 +1,12 @@
 const BASE = new URL(".", self.location).pathname;
-const CACHE = "biobot-shell-v35";
+const CACHE = "biobot-shell-v36";
 const SHELL = [
   BASE,
   BASE + "index.html",
   BASE + "animalpedia.html",
+  BASE + "plantpedia.html",
+  BASE + "plantpedia.js",
+  BASE + "iucn-plants-1000.js",
   BASE + "minigames.html",
   BASE + "bio-city.html",
   BASE + "merchandise.html",
@@ -23,6 +26,7 @@ const SHELL = [
   BASE + "styles.css",
   BASE + "styles.css?v=sitewide-conservation-1",
   BASE + "animalpedia.js",
+  BASE + "plantpedia.js",
   BASE + "minigames.js",
   BASE + "minigames.js?v=minigames-collection-1",
   BASE + "minigames.js?v=sitewide-conservation-1",
