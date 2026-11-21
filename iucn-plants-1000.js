@@ -1,0 +1,1 @@
+window.BIOBOT_PLANTS = {version:"", citation:"", source:"https://www.iucnredlist.org/", species:[]};
