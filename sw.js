@@ -1,8 +1,9 @@
 const BASE = new URL(".", self.location).pathname;
-const CACHE = "biobot-shell-v36";
+const CACHE = "biobot-shell-v37";
 const SHELL = [
   BASE,
   BASE + "index.html",
+  BASE + "floaunapedia.html",
   BASE + "animalpedia.html",
   BASE + "plantpedia.html",
   BASE + "plantpedia.js",
