@@ -65,6 +65,7 @@ $('plantCsv').addEventListener('change',async e=>{const file=e.target.files&&e.t
 search.addEventListener('input',()=>{page=1;renderList();});
 $('plantPrevious').addEventListener('click',()=>{page=Math.max(1,page-1);renderList();});
 $('plantNext').addEventListener('click',()=>{page++;renderList();});
+if(records.length){search.disabled=false;$('plantCount').textContent=records.length.toLocaleString()+' plants · IUCN '+meta.version;status.textContent='Loaded '+records.length.toLocaleString()+' plant assessments from the IUCN '+meta.version+' sample.';$('plantChartSubtitle').textContent='IUCN category distribution across '+records.length.toLocaleString()+' plant assessments.';}
 document.querySelectorAll('[data-close-plant]').forEach(el=>el.addEventListener('click',()=>{$('plantModal').hidden=true;document.body.classList.remove('pedia-modal-open');}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('plantModal').hidden){$('plantModal').hidden=true;document.body.classList.remove('pedia-modal-open');}});
 renderFilters();renderChart();renderList();
