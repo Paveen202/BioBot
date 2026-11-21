@@ -31,7 +31,7 @@
     status.textContent=signedIn
       ?"Background color saved to your BioBot account and syncing across devices."
       :configured
-        ?"Saved on this device. Sign in from the Profile button to sync across devices."
+        ?"Saved on this device. Open the Profile tab to sign in and sync across devices."
         :"Saved on this device. Account sync needs to be configured before it can sync across devices.";
   }
 

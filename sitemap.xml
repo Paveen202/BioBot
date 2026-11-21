@@ -1,10 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://paveen202.github.io/BioBot/</loc></url>
-  <url><loc>https://paveen202.github.io/BioBot/animalpedia.html</loc></url>
-  <url><loc>https://paveen202.github.io/BioBot/minigames.html</loc></url>
-  <url><loc>https://paveen202.github.io/BioBot/bio-city.html</loc></url>
-  <url><loc>https://paveen202.github.io/BioBot/tips.html</loc></url>
-  <url><loc>https://paveen202.github.io/BioBot/disaster-risk.html</loc></url>
-  <url><loc>https://paveen202.github.io/BioBot/pollution.html</loc></url>
-</urlset>
+<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>https://paveen202.github.io/BioBot/</loc></url>\n  <url><loc>https://paveen202.github.io/BioBot/floaunapedia.html</loc></url>\n  <url><loc>https://paveen202.github.io/BioBot/play.html</loc></url>\n  <url><loc>https://paveen202.github.io/BioBot/conservation.html</loc></url>\n</urlset>\n

@@ -15,13 +15,13 @@
   <script>
     const query = new URLSearchParams(location.search);
     query.set("battle", "1");
-    document.getElementById("battleView").src = `bio-city.html?${query.toString()}`;
+    document.getElementById("battleView").src = `play.html?${query.toString()}#city`;
     const tips=["Keep an eye on both health bars. A good move at the right time can turn the match around.","Try a defensive move when your animal is low on health.","Healthy habitats need clean water and plant life as well as safe space for wildlife.","Saving energy and reducing pollution can help protect the natural systems animals rely on.","Your chosen habitat sets the scene for this match."];
     let tipIndex=0;const tipTimer=setInterval(()=>{tipIndex=(tipIndex+1)%tips.length;document.getElementById("loadingTip").textContent=tips[tipIndex];},2400);
     window.addEventListener("message", event => {
       if (event.origin !== location.origin) return;
       if (event.data?.type === "biocity-battle-ready") { document.body.classList.remove("is-loading"); document.getElementById("battleLoading").hidden = true; clearInterval(tipTimer); }
-      if (event.data?.type === "biocity-exit-battle") location.href = "bio-city.html#battleScreen";
+      if (event.data?.type === "biocity-exit-battle") location.href = "play.html#battleScreen";
     });
   </script>
 <script src="custom-background.js"></script></body>
