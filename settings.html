@@ -1,1 +1,106 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=index.html#profile-settings"><link rel="canonical" href="https://paveen202.github.io/BioBot/index.html#profile-settings"><title>Settings are in Profile — BioBot</title></head><body><p>Open <a href="index.html#profile-settings">Profile → Settings</a>.</p><script>location.replace("index.html#profile-settings");</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4ec">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BioBot">
+  <title>Settings — BioBot</title>
+  <meta name="description" content="Personalize BioBot wallpaper colors, font colors, fonts, and display preferences.">
+  <link rel="canonical" href="https://paveen202.github.io/BioBot/settings.html">
+  <link rel="stylesheet" href="styles.css?v=sitewide-conservation-1">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="BioBot home"><span class="brand-mark" aria-hidden="true">✳</span><span>biobot</span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="floaunapedia.html">Floaunapedia</a>
+      <a href="play.html#minigames">Play</a>
+      <a href="conservation.html#tips">Conservation</a>
+      <a href="settings.html" aria-current="page">Settings</a>
+    </nav>
+  </header>
+  <main class="standalone-main biocity-main">
+    <div class="settings-page-heading">
+      <p class="eyebrow">Make BioBot yours</p>
+      <h1>Settings</h1>
+      <p>Choose a wallpaper color, font color, and typeface. Sign in to the same BioBot account on each device to sync your wallpaper color.</p>
+    </div>
+    <section class="settings-panel" aria-labelledby="backgroundTitle">
+      <h2 id="backgroundTitle">Wallpaper color</h2>
+      <p>Choose a soft color or use the picker to create your own.</p>
+      <div class="color-swatches" role="group" aria-label="Suggested wallpaper colors">
+        <button class="color-swatch" type="button" data-color="#f5f4ec" style="background:#f5f4ec" aria-label="Warm paper"></button>
+        <button class="color-swatch" type="button" data-color="#e8f1e7" style="background:#e8f1e7" aria-label="Soft sage"></button>
+        <button class="color-swatch" type="button" data-color="#e8f0f5" style="background:#e8f0f5" aria-label="Sky mist"></button>
+        <button class="color-swatch" type="button" data-color="#f4eadc" style="background:#f4eadc" aria-label="Sand"></button>
+        <button class="color-swatch" type="button" data-color="#f1e8f4" style="background:#f1e8f4" aria-label="Lilac"></button>
+        <button class="color-swatch" type="button" data-color="#f5e7e4" style="background:#f5e7e4" aria-label="Rose"></button>
+      </div>
+      <label class="custom-color-row" for="customBackgroundColor"><span>Custom wallpaper color</span><input id="customBackgroundColor" type="color" value="#f5f4ec"></label>
+      <div class="settings-actions">
+        <button id="saveBackground" class="button button-primary" type="button">Save wallpaper</button>
+        <button id="resetBackground" class="button button-light" type="button">Reset</button>
+      </div>
+      <p id="settingsStatus" class="settings-status" aria-live="polite"></p>
+    </section>
+    <section class="settings-panel" aria-labelledby="fontTitle">
+      <h2 id="fontTitle">Font color</h2>
+      <p>Choose the main text color across BioBot pages.</p>
+      <label class="custom-color-row" for="customFontColor"><span>Custom font color</span><input id="customFontColor" type="color" value="#1b3025"></label>
+      <div class="settings-actions">
+        <button id="saveFontColor" class="button button-primary" type="button">Save font color</button>
+        <button id="resetFontColor" class="button button-light" type="button">Reset font color</button>
+      </div>
+      <p id="fontColorStatus" class="settings-status" aria-live="polite"></p>
+    </section>
+    <section class="settings-panel" aria-labelledby="fontFamilyTitle">
+      <h2 id="fontFamilyTitle">Font selection</h2>
+      <p>Choose the typeface used for headings and text across BioBot pages. This choice is saved in this browser.</p>
+      <div class="settings-control-row">
+        <label for="fontFamily">Font family</label>
+        <select id="fontFamily" aria-describedby="fontFamilyStatus">
+          <option value="default">BioBot default</option>
+          <option value="system">System</option>
+          <option value="rounded">Rounded</option>
+          <option value="serif">Serif</option>
+          <option value="mono">Monospace</option>
+        </select>
+      </div>
+      <p id="fontFamilyStatus" class="settings-status" aria-live="polite"></p>
+    </section>
+    <section class="settings-panel" aria-labelledby="displayTitle">
+      <h2 id="displayTitle">Display preferences</h2>
+      <p>Adjust text size and animation. These preferences save in this browser.</p>
+      <div class="settings-control-row">
+        <label for="textSize">Text size</label>
+        <select id="textSize">
+          <option value="normal">Standard</option>
+          <option value="large">Large</option>
+          <option value="larger">Extra large</option>
+        </select>
+      </div>
+      <label class="settings-toggle" for="reduceMotion">
+        <span><strong>Reduce animations</strong><small>Use fewer moving effects and transitions.</small></span>
+        <input id="reduceMotion" type="checkbox">
+      </label>
+      <div class="settings-actions"><button id="resetDisplayPreferences" class="button button-light" type="button">Reset display preferences</button></div>
+      <p id="displayStatus" class="settings-status" aria-live="polite"></p>
+    </section>
+    <footer class="site-footer"><a href="index.html">Return to Home →</a></footer>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="bio-city-catalog.js"></script>
+  <script src="merch-catalog.js"></script>
+  <script>window.BIOBOT_CITY_CATALOG=window.BIOBOT_CITY_CATALOG_DATA||[];</script>
+  <script src="profile.js"></script>
+  <script src="custom-background.js"></script>
+  <script src="settings.js"></script>
+  <script>if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("sw.js?v=39",{updateViaCache:"none"}).catch(() => {}));</script>
+</body>
+</html>
